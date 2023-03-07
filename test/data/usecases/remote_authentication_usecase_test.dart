@@ -1,7 +1,9 @@
+import 'package:clean_flutter_login_app/data/http/http.error.dart';
 import 'package:clean_flutter_login_app/data/http/http_client.dart';
 import 'package:clean_flutter_login_app/data/usecases/remote_authentication_usecase.dart';
 import 'package:clean_flutter_login_app/domain/entities/authentication_params_entity.dart';
 import 'package:clean_flutter_login_app/utils/constants.dart';
+import 'package:clean_flutter_login_app/utils/domain_error.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -42,5 +44,20 @@ void main() {
             passwordKey: params.password,
           },
         ));
+  });
+
+  test('should throw an unexpected error if http client return 400', () async {
+    final params = AuthenticationParamsEntity(
+        email: faker.internet.email(), password: faker.internet.password());
+
+    when(() => httpClient.request(
+          url: any(named: 'url'),
+          method: any(named: 'method'),
+          body: any(named: 'body'),
+        )).thenThrow(HttpError.badRequest);
+
+    final future = systemUnderTest.auth(params);
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
