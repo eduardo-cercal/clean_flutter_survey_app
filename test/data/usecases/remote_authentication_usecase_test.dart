@@ -1,6 +1,7 @@
 import 'package:clean_flutter_login_app/data/http/http_client.dart';
 import 'package:clean_flutter_login_app/data/usecases/remote_authentication_usecase.dart';
 import 'package:clean_flutter_login_app/domain/entities/authentication_params_entity.dart';
+import 'package:clean_flutter_login_app/utils/constants.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -36,7 +37,10 @@ void main() {
     verify(() => httpClient.request(
           url: url,
           method: 'post',
-          body: params.toJson(),
+          body: {
+            emailKey: params.email,
+            passwordKey: params.password,
+          },
         ));
   });
 }

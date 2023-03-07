@@ -1,3 +1,5 @@
+import 'package:clean_flutter_login_app/data/models/authentication_params_model.dart';
+
 import '../../domain/entities/authentication_params_entity.dart';
 import '../http/http_client.dart';
 
@@ -11,6 +13,13 @@ class RemoteAuthentication {
   });
 
   Future<void> auth(AuthenticationParamsEntity params) async {
-    await httpClient.request(url: url, method: 'post', body: params.toJson());
+    final AuthenticationParamsModel model =
+        AuthenticationParamsModel.fromEntity(params);
+
+    await httpClient.request(
+      url: url,
+      method: 'post',
+      body: model.toJson(),
+    );
   }
 }
