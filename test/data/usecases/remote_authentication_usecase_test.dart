@@ -14,6 +14,7 @@ void main() {
   late HttpClient httpClient;
   late String url;
   late RemoteAuthentication systemUnderTest;
+  late AuthenticationParamsEntity params;
 
   setUp(() {
     httpClient = MockHttpClient();
@@ -22,12 +23,13 @@ void main() {
       httpClient: httpClient,
       url: url,
     );
+    params = AuthenticationParamsEntity(
+      email: faker.internet.email(),
+      password: faker.internet.password(),
+    );
   });
 
   test('should call http client with the current values', () async {
-    final params = AuthenticationParamsEntity(
-        email: faker.internet.email(), password: faker.internet.password());
-
     when(() => httpClient.request(
           url: any(named: 'url'),
           method: any(named: 'method'),
@@ -47,9 +49,6 @@ void main() {
   });
 
   test('should throw an unexpected error if http client return 400', () async {
-    final params = AuthenticationParamsEntity(
-        email: faker.internet.email(), password: faker.internet.password());
-
     when(() => httpClient.request(
           url: any(named: 'url'),
           method: any(named: 'method'),
