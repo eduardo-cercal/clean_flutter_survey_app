@@ -83,4 +83,17 @@ void main() {
 
     expect(future, throwsA(DomainError.unexpected));
   });
+
+  test('should throw a invalid credentials error if http client return 401',
+      () async {
+    when(() => httpClient.request(
+          url: any(named: 'url'),
+          method: any(named: 'method'),
+          body: any(named: 'body'),
+        )).thenThrow(HttpError.unauthorized);
+
+    final future = systemUnderTest.auth(params);
+
+    expect(future, throwsA(DomainError.invalidCredentials));
+  });
 }
