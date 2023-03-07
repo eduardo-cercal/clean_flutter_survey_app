@@ -34,7 +34,10 @@ void main() {
           url: any(named: 'url'),
           method: any(named: 'method'),
           body: any(named: 'body'),
-        )).thenAnswer((_) async {});
+        )).thenAnswer((_) async => {
+          tokenKey: faker.guid.guid(),
+          nameKey: faker.person.name(),
+        });
 
     await systemUnderTest.auth(params);
 
@@ -95,5 +98,22 @@ void main() {
     final future = systemUnderTest.auth(params);
 
     expect(future, throwsA(DomainError.invalidCredentials));
+  });
+
+  test('should return an account if http client return 200', () async {
+    final token = faker.guid.guid();
+
+    when(() => httpClient.request(
+          url: any(named: 'url'),
+          method: any(named: 'method'),
+          body: any(named: 'body'),
+        )).thenAnswer((_) async => {
+          tokenKey: token,
+          nameKey: faker.person.name(),
+        });
+
+    final result = await systemUnderTest.auth(params);
+
+    expect(result.token, token);
   });
 }
