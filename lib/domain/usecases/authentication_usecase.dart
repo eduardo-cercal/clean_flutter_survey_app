@@ -1,15 +1,7 @@
 import 'package:clean_flutter_login_app/domain/entities/account_entity.dart';
 
-abstract class Authentication {
-  Future<AccountEntity> auth(AuthenticationParams params);
-}
+import '../entities/authentication_params_entity.dart';
 
-class AuthenticationParams {
-  final String email;
-  final String password;
-
-  AuthenticationParams({
-    required this.email,
-    required this.password,
-  });
+abstract class AuthenticationUseCase {
+  Future<AccountEntity> auth(AuthenticationParamsEntity params);
 }
