@@ -137,6 +137,23 @@ void main() {
           ));
     });
 
+    test('should return unauthorized error if post returns 401', () async {
+      when(() => client.post(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('{}', 401));
+
+      final future = systemUnderTest.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.unauthorized));
+
+      verify(() => client.post(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
     test('should return server error erro if post returns 500', () async {
       when(() => client.post(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response('{}', 500));
