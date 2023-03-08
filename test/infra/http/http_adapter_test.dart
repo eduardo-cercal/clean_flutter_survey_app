@@ -1,37 +1,11 @@
 import 'dart:convert';
 
 import 'package:clean_flutter_login_app/data/http/http_client.dart';
+import 'package:clean_flutter_login_app/infra/http/http_adapter.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
-
-class HttpAdapter implements HttpClient {
-  final http.Client client;
-
-  HttpAdapter(this.client);
-
-  @override
-  Future<Map<String, dynamic>?> request({
-    required String url,
-    required String method,
-    Map<String, dynamic>? body,
-  }) async {
-    final headers = {
-      'content-type': 'application/json',
-      'accept': 'application/json',
-    };
-    final response = await client.post(
-      Uri.parse(url),
-      headers: headers,
-      body: body != null ? jsonEncode(body) : null,
-    );
-
-    if (response.statusCode != 200) return null;
-
-    return response.body.isEmpty ? null : jsonDecode(response.body);
-  }
-}
 
 class MockHttpClient extends Mock implements http.Client {}
 
