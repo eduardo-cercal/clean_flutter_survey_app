@@ -217,5 +217,22 @@ void main() {
             },
           ));
     });
+
+    test('should return server error if post throws', () async {
+      when(() => client.post(any(), headers: any(named: 'headers')))
+          .thenThrow(Exception());
+
+      final future = systemUnderTest.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.serverError));
+
+      verify(() => client.post(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
   });
 }
