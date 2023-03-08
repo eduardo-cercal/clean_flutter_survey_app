@@ -26,6 +26,9 @@ class HttpAdapter implements HttpClient {
       headers: headers,
       body: body != null ? jsonEncode(body) : null,
     );
+
+    if (response.statusCode != 200) return null;
+
     return response.body.isEmpty ? null : jsonDecode(response.body);
   }
 }
@@ -111,6 +114,23 @@ void main() {
     test('should return null if post returns 204', () async {
       when(() => client.post(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response('', 204));
+
+      final result = await systemUnderTest.request(url: url, method: 'post');
+
+      expect(result, null);
+
+      verify(() => client.post(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return null if post returns 204 with data', () async {
+      when(() => client.post(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('{}', 204));
 
       final result = await systemUnderTest.request(url: url, method: 'post');
 
