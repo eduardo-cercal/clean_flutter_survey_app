@@ -21,7 +21,11 @@ class HttpAdapter implements HttpClient {
       'content-type': 'application/json',
       'accept': 'application/json',
     };
-    await client.post(Uri.parse(url), headers: headers, body: jsonEncode(body));
+    await client.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body != null ? jsonEncode(body) : null,
+    );
     return {};
   }
 }
@@ -53,6 +57,21 @@ void main() {
             'accept': 'application/json',
           },
           body: '{}'));
+    });
+
+    test('should call post without the body', () async {
+      when(() => client.post(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('', 200));
+
+      await systemUnderTest.request(url: url, method: 'post');
+
+      verify(() => client.post(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
     });
   });
 }
