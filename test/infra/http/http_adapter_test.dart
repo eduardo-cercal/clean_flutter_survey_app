@@ -21,6 +21,19 @@ void main() {
     registerFallbackValue(Uri.parse(url));
   });
 
+  group('shared', () {
+    test('should thros a server error if invalid method is provided', () async {
+      when(() => client.post(any(),
+              headers: any(named: 'headers'), body: any(named: 'body')))
+          .thenAnswer((_) async => http.Response('{}', 200));
+
+      final future =
+          systemUnderTest.request(url: url, method: 'invalid', body: {});
+
+      expect(future, throwsA(HttpError.serverError));
+    });
+  });
+
   group('post', () {
     test('should call post with correct values', () async {
       when(() => client.post(any(),
