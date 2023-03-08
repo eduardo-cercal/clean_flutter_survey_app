@@ -29,7 +29,7 @@ class RemoteAuthentication implements AuthenticationUseCase {
         body: model.toJson(),
       );
 
-      return AccountModel.fromJson(result);
+      return AccountModel.fromJson(result!);
     } on HttpError catch (error) {
       throw error == HttpError.unauthorized
           ? DomainError.invalidCredentials

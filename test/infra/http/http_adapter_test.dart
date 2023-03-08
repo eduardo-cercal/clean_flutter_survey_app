@@ -12,7 +12,7 @@ class HttpAdapter implements HttpClient {
   HttpAdapter(this.client);
 
   @override
-  Future<Map<String, dynamic>> request({
+  Future<Map<String, dynamic>?> request({
     required String url,
     required String method,
     Map<String, dynamic>? body,
@@ -26,7 +26,7 @@ class HttpAdapter implements HttpClient {
       headers: headers,
       body: body != null ? jsonEncode(body) : null,
     );
-    return jsonDecode(response.body);
+    return response.body.isEmpty ? null : jsonDecode(response.body);
   }
 }
 
@@ -81,6 +81,23 @@ void main() {
       final result = await systemUnderTest.request(url: url, method: 'post');
 
       expect(result, {});
+
+      verify(() => client.post(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return null if post returns 200 with null data', () async {
+      when(() => client.post(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('', 200));
+
+      final result = await systemUnderTest.request(url: url, method: 'post');
+
+      expect(result, null);
 
       verify(() => client.post(
             Uri.parse(url),
