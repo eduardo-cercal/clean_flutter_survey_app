@@ -15,7 +15,11 @@ class HttpAdapter implements HttpClient {
     required String method,
     Map<String, dynamic>? body,
   }) async {
-    await client.post(Uri.parse(url));
+    final headers = {
+      'content-type': 'application/json',
+      'accept': 'application/json',
+    };
+    await client.post(Uri.parse(url), headers: headers);
     return {};
   }
 }
@@ -35,12 +39,18 @@ void main() {
 
   group('post', () {
     test('should call post with correct values', () async {
-      when(() => client.post(any()))
+      when(() => client.post(any(), headers: any(named: 'headers')))
           .thenAnswer((_) async => http.Response('', 200));
 
       await systemUnderTest.request(url: url, method: 'post');
 
-      verify(() => client.post(Uri.parse(url)));
+      verify(() => client.post(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
     });
   });
 }
