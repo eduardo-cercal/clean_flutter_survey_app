@@ -35,6 +35,8 @@ class HttpAdapter implements HttpClient {
         return null;
       case 400:
         throw HttpError.badRequest;
+      case 500:
+        throw HttpError.serverError;
       default:
         return response.body.isEmpty ? null : jsonDecode(response.body);
     }
