@@ -21,12 +21,12 @@ class HttpAdapter implements HttpClient {
       'content-type': 'application/json',
       'accept': 'application/json',
     };
-    await client.post(
+    final response = await client.post(
       Uri.parse(url),
       headers: headers,
       body: body != null ? jsonEncode(body) : null,
     );
-    return {};
+    return jsonDecode(response.body);
   }
 }
 
@@ -47,7 +47,7 @@ void main() {
     test('should call post with correct values', () async {
       when(() => client.post(any(),
               headers: any(named: 'headers'), body: any(named: 'body')))
-          .thenAnswer((_) async => http.Response('', 200));
+          .thenAnswer((_) async => http.Response('{}', 200));
 
       await systemUnderTest.request(url: url, method: 'post', body: {});
 
@@ -61,9 +61,26 @@ void main() {
 
     test('should call post without the body', () async {
       when(() => client.post(any(), headers: any(named: 'headers')))
-          .thenAnswer((_) async => http.Response('', 200));
+          .thenAnswer((_) async => http.Response('{}', 200));
 
       await systemUnderTest.request(url: url, method: 'post');
+
+      verify(() => client.post(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return data if post returns 200', () async {
+      when(() => client.post(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('{}', 200));
+
+      final result = await systemUnderTest.request(url: url, method: 'post');
+
+      expect(result, {});
 
       verify(() => client.post(
             Uri.parse(url),
