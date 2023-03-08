@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:clean_flutter_login_app/data/http/http.error.dart';
 import 'package:clean_flutter_login_app/data/http/http_client.dart';
 import 'package:clean_flutter_login_app/infra/http/http_adapter.dart';
 import 'package:faker/faker.dart';
@@ -109,6 +110,23 @@ void main() {
       final result = await systemUnderTest.request(url: url, method: 'post');
 
       expect(result, null);
+
+      verify(() => client.post(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return bad request erro if post returns 400', () async {
+      when(() => client.post(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('{}', 400));
+
+      final future = systemUnderTest.request(url: url, method: 'post');
+
+      expect(future, throwsA(HttpError.badRequest));
 
       verify(() => client.post(
             Uri.parse(url),

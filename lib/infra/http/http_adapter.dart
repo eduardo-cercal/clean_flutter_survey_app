@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:clean_flutter_login_app/data/http/http.error.dart';
+
 import '../../data/http/http_client.dart';
 import 'package:http/http.dart' as http;
 
@@ -28,8 +30,13 @@ class HttpAdapter implements HttpClient {
   }
 
   Map<String, dynamic>? _handleResponse(http.Response response) {
-    if (response.statusCode != 200) return null;
-
-    return response.body.isEmpty ? null : jsonDecode(response.body);
+    switch (response.statusCode) {
+      case 204:
+        return null;
+      case 400:
+        throw HttpError.badRequest;
+      default:
+        return response.body.isEmpty ? null : jsonDecode(response.body);
+    }
   }
 }
