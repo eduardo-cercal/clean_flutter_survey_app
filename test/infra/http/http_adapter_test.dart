@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:clean_flutter_login_app/data/http/http_client.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,7 +21,7 @@ class HttpAdapter implements HttpClient {
       'content-type': 'application/json',
       'accept': 'application/json',
     };
-    await client.post(Uri.parse(url), headers: headers);
+    await client.post(Uri.parse(url), headers: headers, body: jsonEncode(body));
     return {};
   }
 }
@@ -39,18 +41,18 @@ void main() {
 
   group('post', () {
     test('should call post with correct values', () async {
-      when(() => client.post(any(), headers: any(named: 'headers')))
+      when(() => client.post(any(),
+              headers: any(named: 'headers'), body: any(named: 'body')))
           .thenAnswer((_) async => http.Response('', 200));
 
-      await systemUnderTest.request(url: url, method: 'post');
+      await systemUnderTest.request(url: url, method: 'post', body: {});
 
-      verify(() => client.post(
-            Uri.parse(url),
-            headers: {
-              'content-type': 'application/json',
-              'accept': 'application/json',
-            },
-          ));
+      verify(() => client.post(Uri.parse(url),
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json',
+          },
+          body: '{}'));
     });
   });
 }
