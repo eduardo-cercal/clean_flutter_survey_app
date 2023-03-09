@@ -5,17 +5,28 @@ import 'package:flutter/material.dart';
 import '../../components/headline_1.dart';
 import '../../components/login_header.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   final LoginPresenter? presenter;
 
   const LoginPage({super.key, required this.presenter});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  @override
+  void dispose() {
+    widget.presenter?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Builder(
         builder: (context) {
-          presenter?.loadingStream.listen((isLoading) {
+          widget.presenter?.loadingStream.listen((isLoading) {
             if (isLoading) {
               showDialog(
                 context: context,
@@ -44,7 +55,7 @@ class LoginPage extends StatelessWidget {
               }
             }
           });
-          presenter?.mainErrorStream.listen((error) {
+          widget.presenter?.mainErrorStream.listen((error) {
             if (error != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -69,13 +80,13 @@ class LoginPage extends StatelessWidget {
                     child: Column(
                       children: [
                         StreamBuilder<String?>(
-                            stream: presenter?.emailErrorStream,
+                            stream: widget.presenter?.emailErrorStream,
                             builder: (context, snapshot) {
                               return LoginTextFormField(
                                 text: 'Email',
                                 icon: Icons.email,
                                 isPassword: false,
-                                onChanged: presenter?.validateEmail,
+                                onChanged: widget.presenter?.validateEmail,
                                 errorText: snapshot.data?.isEmpty == true
                                     ? null
                                     : snapshot.data,
@@ -87,13 +98,13 @@ class LoginPage extends StatelessWidget {
                             bottom: 32,
                           ),
                           child: StreamBuilder<String?>(
-                              stream: presenter?.passwordErrorStream,
+                              stream: widget.presenter?.passwordErrorStream,
                               builder: (context, snapshot) {
                                 return LoginTextFormField(
                                   text: 'Senha',
                                   icon: Icons.lock,
                                   isPassword: true,
-                                  onChanged: presenter?.validatePassword,
+                                  onChanged: widget.presenter?.validatePassword,
                                   errorText: snapshot.data?.isEmpty == true
                                       ? null
                                       : snapshot.data,
@@ -101,11 +112,11 @@ class LoginPage extends StatelessWidget {
                               }),
                         ),
                         StreamBuilder<bool>(
-                            stream: presenter?.formValidStream,
+                            stream: widget.presenter?.formValidStream,
                             builder: (context, snapshot) {
                               return ElevatedButton(
                                 onPressed: snapshot.data == true
-                                    ? presenter?.auth
+                                    ? widget.presenter?.auth
                                     : null,
                                 child: Text('Entrar'.toUpperCase()),
                               );
