@@ -15,6 +15,5 @@
 12. Show loading in the begining of the login
 13. Auteticate the user and password inputed in the form
 14. Show a error message in a login fail case
-15. Save the users token on the cache to keeped connected
-16. Redirect the user to the survey list page
-17. Hide loading in the end of the login action
+15. Hide loading in the end of the login action
+16. Close streams when the page close 
