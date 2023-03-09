@@ -42,13 +42,19 @@ class LoginPage extends StatelessWidget {
                         top: 8.0,
                         bottom: 32,
                       ),
-                      child: LoginTextFormField(
-                        text: 'Senha',
-                        icon: Icons.lock,
-                        isPassword: true,
-                        onChanged: presenter?.validatePassword,
-                        errorText: null,
-                      ),
+                      child: StreamBuilder<String?>(
+                          stream: presenter?.passwordErrorStream,
+                          builder: (context, snapshot) {
+                            return LoginTextFormField(
+                              text: 'Senha',
+                              icon: Icons.lock,
+                              isPassword: true,
+                              onChanged: presenter?.validatePassword,
+                              errorText: snapshot.data?.isEmpty == true
+                                  ? null
+                                  : snapshot.data,
+                            );
+                          }),
                     ),
                     ElevatedButton(
                       onPressed: null,
