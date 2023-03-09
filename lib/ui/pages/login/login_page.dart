@@ -1,11 +1,14 @@
 import 'package:clean_flutter_login_app/ui/pages/login/components/login_text_form_field.dart';
+import 'package:clean_flutter_login_app/ui/pages/login/login_presenter.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/headline_1.dart';
 import '../../components/login_header.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  final LoginPresenter? presenter;
+
+  const LoginPage({super.key, required this.presenter});
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +24,14 @@ class LoginPage extends StatelessWidget {
               child: Form(
                 child: Column(
                   children: [
-                    const LoginTextFormField(
+                    LoginTextFormField(
                       text: 'Email',
                       icon: Icons.email,
                       isPassword: false,
+                      onChanged: presenter?.validateEmail,
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(
+                    Padding(
+                      padding: const EdgeInsets.only(
                         top: 8.0,
                         bottom: 32,
                       ),
@@ -35,6 +39,7 @@ class LoginPage extends StatelessWidget {
                         text: 'Senha',
                         icon: Icons.lock,
                         isPassword: true,
+                        onChanged: presenter?.validatePassword,
                       ),
                     ),
                     ElevatedButton(
