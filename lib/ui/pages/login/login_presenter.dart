@@ -7,6 +7,8 @@ abstract class LoginPresenter {
 
   Stream<bool> get loadingStream;
 
+  Stream<String?> get mainErrorStream;
+
   void validateEmail(String email);
 
   void validatePassword(String password);
