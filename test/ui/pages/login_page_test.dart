@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:clean_flutter_login_app/ui/pages/login/login_page.dart';
 import 'package:clean_flutter_login_app/ui/pages/login/login_presenter.dart';
 import 'package:faker/faker.dart';
@@ -9,8 +11,12 @@ class MockLoginPresenter extends Mock implements LoginPresenter {}
 
 void main() {
   late LoginPresenter presenter;
+  late StreamController<String?> emailErrorController;
   Future<void> loadPage(WidgetTester tester) async {
     presenter = MockLoginPresenter();
+    emailErrorController = StreamController<String?>();
+    when(() => presenter.emailErrorStream)
+        .thenAnswer((_) => emailErrorController.stream);
     final loginPage = MaterialApp(
       home: LoginPage(
         presenter: presenter,
@@ -18,6 +24,10 @@ void main() {
     );
     await tester.pumpWidget(loginPage);
   }
+
+  tearDown(() {
+    emailErrorController.close();
+  });
 
   testWidgets(
     "Should load with correct initial state",
@@ -52,6 +62,48 @@ void main() {
       final password = faker.internet.password();
       await tester.enterText(find.bySemanticsLabel('Senha'), password);
       verify(() => presenter.validatePassword(password));
+    },
+  );
+
+  testWidgets(
+    "Should present error if email is invalid",
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      emailErrorController.add('any error');
+      await tester.pump();
+
+      expect(find.text('any error'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    "Should present no error if email is valid",
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      emailErrorController.add(null);
+      await tester.pump();
+
+      final emailTextChilfren = find.descendant(
+          of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
+
+      expect(emailTextChilfren, findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    "Should present no error if email is valid",
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      emailErrorController.add('');
+      await tester.pump();
+
+      final emailTextChilfren = find.descendant(
+          of: find.bySemanticsLabel('Email'), matching: find.byType(Text));
+
+      expect(emailTextChilfren, findsOneWidget);
     },
   );
 }

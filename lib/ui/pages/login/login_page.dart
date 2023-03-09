@@ -24,12 +24,19 @@ class LoginPage extends StatelessWidget {
               child: Form(
                 child: Column(
                   children: [
-                    LoginTextFormField(
-                      text: 'Email',
-                      icon: Icons.email,
-                      isPassword: false,
-                      onChanged: presenter?.validateEmail,
-                    ),
+                    StreamBuilder<String?>(
+                        stream: presenter?.emailErrorStream,
+                        builder: (context, snapshot) {
+                          return LoginTextFormField(
+                            text: 'Email',
+                            icon: Icons.email,
+                            isPassword: false,
+                            onChanged: presenter?.validateEmail,
+                            errorText: snapshot.data?.isEmpty == true
+                                ? null
+                                : snapshot.data,
+                          );
+                        }),
                     Padding(
                       padding: const EdgeInsets.only(
                         top: 8.0,
@@ -40,6 +47,7 @@ class LoginPage extends StatelessWidget {
                         icon: Icons.lock,
                         isPassword: true,
                         onChanged: presenter?.validatePassword,
+                        errorText: null,
                       ),
                     ),
                     ElevatedButton(

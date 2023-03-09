@@ -5,6 +5,7 @@ class LoginTextFormField extends StatelessWidget {
   final IconData icon;
   final bool isPassword;
   final Function(String text)? onChanged;
+  final String? errorText;
 
   const LoginTextFormField({
     super.key,
@@ -12,6 +13,7 @@ class LoginTextFormField extends StatelessWidget {
     required this.icon,
     required this.isPassword,
     required this.onChanged,
+    required this.errorText,
   });
 
   @override
@@ -23,6 +25,7 @@ class LoginTextFormField extends StatelessWidget {
           icon,
           color: Theme.of(context).primaryColorLight,
         ),
+        errorText: errorText,
       ),
       obscureText: isPassword,
       onChanged: onChanged,
