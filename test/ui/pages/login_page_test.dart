@@ -13,15 +13,21 @@ void main() {
   late LoginPresenter presenter;
   late StreamController<String?> emailErrorController;
   late StreamController<String?> passwordErrorController;
+  late StreamController<bool> isFormValidController;
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = MockLoginPresenter();
     emailErrorController = StreamController<String?>();
     passwordErrorController = StreamController<String?>();
+    isFormValidController = StreamController<bool>();
+
     when(() => presenter.emailErrorStream)
         .thenAnswer((_) => emailErrorController.stream);
     when(() => presenter.passwordErrorStream)
         .thenAnswer((_) => passwordErrorController.stream);
+    when(() => presenter.formValidStream)
+        .thenAnswer((_) => isFormValidController.stream);
+
     final loginPage = MaterialApp(
       home: LoginPage(
         presenter: presenter,
@@ -33,6 +39,7 @@ void main() {
   tearDown(() {
     emailErrorController.close();
     passwordErrorController.close();
+    isFormValidController.close();
   });
 
   testWidgets(
@@ -152,6 +159,34 @@ void main() {
           of: find.bySemanticsLabel('Senha'), matching: find.byType(Text));
 
       expect(passwordTextChilfren, findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    "Should enable buttom if form is valid",
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      isFormValidController.add(true);
+      await tester.pump();
+
+      final buttom = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+
+      expect(buttom.onPressed, isNotNull);
+    },
+  );
+
+  testWidgets(
+    "Should disable buttom if form is invalid",
+    (WidgetTester tester) async {
+      await loadPage(tester);
+
+      isFormValidController.add(false);
+      await tester.pump();
+
+      final buttom = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+
+      expect(buttom.onPressed, null);
     },
   );
 }
