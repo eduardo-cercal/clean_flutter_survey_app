@@ -5,7 +5,7 @@ class LoginTextFormField extends StatelessWidget {
   final IconData icon;
   final bool isPassword;
   final Function(String text)? onChanged;
-  final String? errorText;
+  final Stream<String?>? stream;
 
   const LoginTextFormField({
     super.key,
@@ -13,22 +13,26 @@ class LoginTextFormField extends StatelessWidget {
     required this.icon,
     required this.isPassword,
     required this.onChanged,
-    required this.errorText,
+    required this.stream,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: text,
-        icon: Icon(
-          icon,
-          color: Theme.of(context).primaryColorLight,
-        ),
-        errorText: errorText,
-      ),
-      obscureText: isPassword,
-      onChanged: onChanged,
-    );
+    return StreamBuilder<String?>(
+        stream: stream,
+        builder: (context, snapshot) {
+          return TextFormField(
+            decoration: InputDecoration(
+              labelText: text,
+              icon: Icon(
+                icon,
+                color: Theme.of(context).primaryColorLight,
+              ),
+              errorText: snapshot.data?.isEmpty == true ? null : snapshot.data,
+            ),
+            obscureText: isPassword,
+            onChanged: onChanged,
+          );
+        });
   }
 }

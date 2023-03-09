@@ -1,3 +1,5 @@
+import 'package:clean_flutter_login_app/ui/components/loading_dialog.dart';
+import 'package:clean_flutter_login_app/ui/components/snack_bar_error.dart';
 import 'package:clean_flutter_login_app/ui/pages/login/components/login_text_form_field.dart';
 import 'package:clean_flutter_login_app/ui/pages/login/login_presenter.dart';
 import 'package:flutter/material.dart';
@@ -27,45 +29,11 @@ class _LoginPageState extends State<LoginPage> {
       body: Builder(
         builder: (context) {
           widget.presenter?.loadingStream.listen((isLoading) {
-            if (isLoading) {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => SimpleDialog(
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        CircularProgressIndicator(),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          'Aguarde...',
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              );
-            } else {
-              if (Navigator.canPop(context)) {
-                Navigator.of(context).pop();
-              }
-            }
+            isLoading ? loadingDialog(context) : Navigator.of(context).pop();
           });
           widget.presenter?.mainErrorStream.listen((error) {
             if (error != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: Colors.red[900],
-                  content: Text(
-                    error,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              );
+              snackBarError(context: context, error: error);
             }
           });
           return SingleChildScrollView(
@@ -79,37 +47,25 @@ class _LoginPageState extends State<LoginPage> {
                   child: Form(
                     child: Column(
                       children: [
-                        StreamBuilder<String?>(
-                            stream: widget.presenter?.emailErrorStream,
-                            builder: (context, snapshot) {
-                              return LoginTextFormField(
-                                text: 'Email',
-                                icon: Icons.email,
-                                isPassword: false,
-                                onChanged: widget.presenter?.validateEmail,
-                                errorText: snapshot.data?.isEmpty == true
-                                    ? null
-                                    : snapshot.data,
-                              );
-                            }),
+                        LoginTextFormField(
+                          text: 'Email',
+                          icon: Icons.email,
+                          isPassword: false,
+                          onChanged: widget.presenter?.validateEmail,
+                          stream: widget.presenter?.emailErrorStream,
+                        ),
                         Padding(
                           padding: const EdgeInsets.only(
                             top: 8.0,
                             bottom: 32,
                           ),
-                          child: StreamBuilder<String?>(
-                              stream: widget.presenter?.passwordErrorStream,
-                              builder: (context, snapshot) {
-                                return LoginTextFormField(
-                                  text: 'Senha',
-                                  icon: Icons.lock,
-                                  isPassword: true,
-                                  onChanged: widget.presenter?.validatePassword,
-                                  errorText: snapshot.data?.isEmpty == true
-                                      ? null
-                                      : snapshot.data,
-                                );
-                              }),
+                          child: LoginTextFormField(
+                            text: 'Senha',
+                            icon: Icons.lock,
+                            isPassword: true,
+                            onChanged: widget.presenter?.validatePassword,
+                            stream: widget.presenter?.passwordErrorStream,
+                          ),
                         ),
                         StreamBuilder<bool>(
                             stream: widget.presenter?.formValidStream,
