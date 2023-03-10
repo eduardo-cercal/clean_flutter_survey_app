@@ -28,10 +28,10 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Builder(
         builder: (context) {
-          widget.presenter?.loadingStream.listen((isLoading) {
+          widget.presenter?.loadingStream?.listen((isLoading) {
             isLoading ? loadingDialog(context) : Navigator.of(context).pop();
           });
-          widget.presenter?.mainErrorStream.listen((error) {
+          widget.presenter?.mainErrorStream?.listen((error) {
             if (error != null) {
               snackBarError(context: context, error: error);
             }
