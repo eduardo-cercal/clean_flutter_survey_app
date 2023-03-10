@@ -29,7 +29,13 @@ class _LoginPageState extends State<LoginPage> {
       body: Builder(
         builder: (context) {
           widget.presenter?.loadingStream?.listen((isLoading) {
-            isLoading ? loadingDialog(context) : Navigator.of(context).pop();
+            if (isLoading) {
+              loadingDialog(context);
+            } else {
+              if (Navigator.canPop(context)) {
+                Navigator.of(context).pop();
+              }
+            }
           });
           widget.presenter?.mainErrorStream?.listen((error) {
             if (error != null) {

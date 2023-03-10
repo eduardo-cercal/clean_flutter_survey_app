@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:clean_flutter_login_app/domain/entities/account_entity.dart';
 import 'package:clean_flutter_login_app/domain/entities/authentication_params_entity.dart';

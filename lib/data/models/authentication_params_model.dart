@@ -3,7 +3,7 @@ import 'package:clean_flutter_login_app/domain/entities/authentication_params_en
 import '../../utils/constants.dart';
 
 class AuthenticationParamsModel extends AuthenticationParamsEntity {
-  AuthenticationParamsModel({
+  const AuthenticationParamsModel({
     required super.email,
     required super.password,
   });
