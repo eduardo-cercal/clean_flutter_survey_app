@@ -17,6 +17,7 @@ dependencies:
   faker: ^2.1.0
   http: ^0.13.5
   flutter_launcher_icons: ^0.12.0
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:
