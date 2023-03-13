@@ -1,6 +1,6 @@
 import 'package:clean_flutter_login_app/data/http/http.error.dart';
 import 'package:clean_flutter_login_app/data/http/http_client.dart';
-import 'package:clean_flutter_login_app/data/usecases/remote_authentication_usecase.dart';
+import 'package:clean_flutter_login_app/data/usecases/authentication/remote_authentication_usecase.dart';
 import 'package:clean_flutter_login_app/domain/entities/authentication_params_entity.dart';
 import 'package:clean_flutter_login_app/utils/constants.dart';
 import 'package:clean_flutter_login_app/utils/domain_error.dart';
