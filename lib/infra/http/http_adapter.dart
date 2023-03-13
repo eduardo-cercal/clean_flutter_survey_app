@@ -40,7 +40,7 @@ class HttpAdapter implements HttpClient {
   Map<String, dynamic>? _handleResponse(http.Response response) {
     switch (response.statusCode) {
       case 204:
-        return null;
+        return {};
       case 400:
         throw HttpError.badRequest;
       case 401:
@@ -52,7 +52,9 @@ class HttpAdapter implements HttpClient {
       case 500:
         throw HttpError.serverError;
       default:
-        return response.body.isEmpty ? null : jsonDecode(response.body);
+        return response.body.contains('<!DOCTYPE html>')
+            ? {}
+            : jsonDecode(response.body);
     }
   }
 }

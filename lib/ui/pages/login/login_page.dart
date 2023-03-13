@@ -42,61 +42,72 @@ class _LoginPageState extends State<LoginPage> {
               snackBarError(context: context, error: error);
             }
           });
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const LoginHeader(),
-                const Headline1(text: 'Login'),
-                Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Form(
-                    child: Column(
-                      children: [
-                        LoginTextFormField(
-                          text: 'Email',
-                          icon: Icons.email,
-                          isPassword: false,
-                          onChanged: widget.presenter?.validateEmail,
-                          stream: widget.presenter?.emailErrorStream,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 8.0,
-                            bottom: 32,
+          return GestureDetector(
+            onTap: _hideKeyboard,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const LoginHeader(),
+                  const Headline1(text: 'Login'),
+                  Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Form(
+                      child: Column(
+                        children: [
+                          LoginTextFormField(
+                            text: 'Email',
+                            icon: Icons.email,
+                            isPassword: false,
+                            onChanged: widget.presenter?.validateEmail,
+                            stream: widget.presenter?.emailErrorStream,
                           ),
-                          child: LoginTextFormField(
-                            text: 'Senha',
-                            icon: Icons.lock,
-                            isPassword: true,
-                            onChanged: widget.presenter?.validatePassword,
-                            stream: widget.presenter?.passwordErrorStream,
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 8.0,
+                              bottom: 32,
+                            ),
+                            child: LoginTextFormField(
+                              text: 'Senha',
+                              icon: Icons.lock,
+                              isPassword: true,
+                              onChanged: widget.presenter?.validatePassword,
+                              stream: widget.presenter?.passwordErrorStream,
+                            ),
                           ),
-                        ),
-                        StreamBuilder<bool>(
-                            stream: widget.presenter?.formValidStream,
-                            builder: (context, snapshot) {
-                              return ElevatedButton(
-                                onPressed: snapshot.data == true
-                                    ? widget.presenter?.auth
-                                    : null,
-                                child: Text('Entrar'.toUpperCase()),
-                              );
-                            }),
-                        TextButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(Icons.person),
-                          label: const Text('Criar conta'),
-                        ),
-                      ],
+                          StreamBuilder<bool>(
+                              stream: widget.presenter?.formValidStream,
+                              builder: (context, snapshot) {
+                                return ElevatedButton(
+                                  onPressed: snapshot.data == true
+                                      ? widget.presenter?.auth
+                                      : null,
+                                  child: Text('Entrar'.toUpperCase()),
+                                );
+                              }),
+                          TextButton.icon(
+                            onPressed: () {},
+                            icon: const Icon(Icons.person),
+                            label: const Text('Criar conta'),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
       ),
     );
+  }
+
+  void _hideKeyboard() {
+    final currentFocus = FocusScope.of(context);
+
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
   }
 }

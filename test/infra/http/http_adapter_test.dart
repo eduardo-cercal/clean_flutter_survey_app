@@ -1,4 +1,3 @@
-
 import 'package:clean_flutter_login_app/data/http/http.error.dart';
 import 'package:clean_flutter_login_app/infra/http/http_adapter.dart';
 import 'package:faker/faker.dart';
@@ -82,11 +81,11 @@ void main() {
 
     test('should return null if post returns 200 with null data', () async {
       when(() => client.post(any(), headers: any(named: 'headers')))
-          .thenAnswer((_) async => http.Response('', 200));
+          .thenAnswer((_) async => http.Response('<!DOCTYPE html>', 200));
 
       final result = await systemUnderTest.request(url: url, method: 'post');
 
-      expect(result, null);
+      expect(result, {});
 
       verify(() => client.post(
             Uri.parse(url),
@@ -103,7 +102,7 @@ void main() {
 
       final result = await systemUnderTest.request(url: url, method: 'post');
 
-      expect(result, null);
+      expect(result, {});
 
       verify(() => client.post(
             Uri.parse(url),
@@ -120,7 +119,7 @@ void main() {
 
       final result = await systemUnderTest.request(url: url, method: 'post');
 
-      expect(result, null);
+      expect(result, {});
 
       verify(() => client.post(
             Uri.parse(url),

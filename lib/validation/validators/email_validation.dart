@@ -1,9 +1,11 @@
+import 'package:equatable/equatable.dart';
+
 import 'dependencies/field_validation.dart';
 
-class EmailValidation implements FieldValidation {
+class EmailValidation extends Equatable implements FieldValidation {
   final String fieldValidator;
 
-  EmailValidation(this.fieldValidator);
+  const EmailValidation(this.fieldValidator);
 
   @override
   String get field => fieldValidator;
@@ -19,4 +21,7 @@ class EmailValidation implements FieldValidation {
 
     return regex.hasMatch(value) ? null : 'campo invalido';
   }
+
+  @override
+  List<Object?> get props => [fieldValidator];
 }
