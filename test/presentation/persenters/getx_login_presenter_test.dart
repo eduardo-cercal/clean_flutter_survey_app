@@ -1,8 +1,10 @@
 import 'package:clean_flutter_login_app/domain/entities/account_entity.dart';
 import 'package:clean_flutter_login_app/domain/entities/authentication_params_entity.dart';
 import 'package:clean_flutter_login_app/domain/usecases/authentication_usecase.dart';
+import 'package:clean_flutter_login_app/domain/usecases/save_current_account.dart';
 import 'package:clean_flutter_login_app/presentation/dependecies/validation.dart';
 import 'package:clean_flutter_login_app/presentation/presenters/login/getx_login_presenter.dart';
+import 'package:clean_flutter_login_app/ui/pages/login/login_presenter.dart';
 import 'package:clean_flutter_login_app/utils/domain_error.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,12 +14,16 @@ class MockValidation extends Mock implements Validation {}
 
 class MockAuthentication extends Mock implements AuthenticationUseCase {}
 
+class MockSaveCurrentAccount extends Mock implements SaveCurrentAccount {}
+
 void main() {
   late Validation validation;
   late AuthenticationUseCase authentication;
-  late GetxLoginPresenter systemUnderTest;
+  late LoginPresenter systemUnderTest;
+  late SaveCurrentAccount saveCurrentAccount;
   final String email = faker.internet.email();
   final String password = faker.internet.password();
+  final token = faker.guid.guid();
 
   When mockValidationCall(String? field) => when(() => validation.validate(
         field: field ?? any(named: 'field'),
@@ -31,25 +37,39 @@ void main() {
   When mockAuthenticationCall() => when(() => authentication.auth(any()));
 
   void mockAuthentication() {
-    mockAuthenticationCall()
-        .thenAnswer((_) async => AccountEntity(faker.guid.guid()));
+    mockAuthenticationCall().thenAnswer((_) async => AccountEntity(token));
+  }
+
+  When mockSaveCurrentAccountCall() =>
+      when(() => saveCurrentAccount.save(any()));
+
+  void mockSaveCurrentAccount() {
+    mockSaveCurrentAccountCall().thenAnswer((_) async {});
   }
 
   void mockAuthenticationError(DomainError error) {
     mockAuthenticationCall().thenThrow(error);
   }
 
+  void mockSaveCurrentAccountError() {
+    mockSaveCurrentAccountCall().thenThrow(DomainError.unexpected);
+  }
+
   setUp(() {
     validation = MockValidation();
     authentication = MockAuthentication();
+    saveCurrentAccount = MockSaveCurrentAccount();
     systemUnderTest = GetxLoginPresenter(
       validation: validation,
       authentication: authentication,
+      saveCurrentAccount: saveCurrentAccount,
     );
     registerFallbackValue(
         AuthenticationParamsEntity(email: email, password: password));
+    registerFallbackValue(AccountEntity(token));
     mockValidation();
     mockAuthentication();
+    mockSaveCurrentAccount();
   });
 
   test('should call validation with correct email', () async {
@@ -148,11 +168,43 @@ void main() {
         .called(1);
   });
 
-  test('should emit correct events on authentication success', () async {
+  test('should call saveCurrentAccount with currect value', () async {
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+
+    await systemUnderTest.auth();
+
+    verify(() => saveCurrentAccount.save(AccountEntity(token))).called(1);
+  });
+
+  test('should emit unexpected error if SaveCurrentAccount fails', () async {
+    mockSaveCurrentAccountError();
+
     systemUnderTest.validateEmail(email);
     systemUnderTest.validatePassword(password);
 
     expectLater(systemUnderTest.loadingStream, emitsInOrder([true, false]));
+    systemUnderTest.mainErrorStream?.listen(expectAsync1((error) =>
+        expect(error, 'Algo inesperado aconteceu. Tente novamente em breve')));
+
+    await systemUnderTest.auth();
+  });
+
+  test('should emit correct events on authentication success', () async {
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+
+    expectLater(systemUnderTest.loadingStream, emits(true));
+
+    await systemUnderTest.auth();
+  });
+
+  test('should change page on success', () async {
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validatePassword(password);
+
+    systemUnderTest.navigateToStream
+        ?.listen(expectAsync1((page) => expect(page, '/surveys')));
 
     await systemUnderTest.auth();
   });

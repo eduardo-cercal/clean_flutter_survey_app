@@ -19,4 +19,5 @@
 16. Notify the mainErrorStream if the Authentication return a DomainError
 17. Close all Streams in the dispose
 18. In a success case, save the Account in the cache
-19. In a success case, take the user to the Survey Page
+19. Notify the mainErrorStream if the SaveCurrentAccount return a error
+20. In a success case, take the user to the Survey Page

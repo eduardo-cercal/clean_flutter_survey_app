@@ -78,4 +78,8 @@ class StreamLoginPresenter implements LoginPresenter {
     controller?.close();
     controller = null;
   }
+
+  @override
+  // TODO: implement navigateToStream
+  Stream<String?>? get navigateToStream => throw UnimplementedError();
 }

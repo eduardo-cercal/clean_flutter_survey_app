@@ -4,6 +4,7 @@ import 'package:clean_flutter_login_app/presentation/presenters/login/stream_log
 import 'package:clean_flutter_login_app/ui/pages/login/login_presenter.dart';
 
 import '../../../../presentation/presenters/login/getx_login_presenter.dart';
+import '../../usecases/save_current_account_factory.dart';
 
 LoginPresenter makeStreamLoginPresenter() => StreamLoginPresenter(
       validation: makeLoginValidation(),
@@ -13,4 +14,5 @@ LoginPresenter makeStreamLoginPresenter() => StreamLoginPresenter(
 LoginPresenter makeGetxLoginPresenter() => GetxLoginPresenter(
       validation: makeLoginValidation(),
       authentication: makeRemoteAuthentication(),
+      saveCurrentAccount: makeLocalSaveCurrentAccount(),
     );

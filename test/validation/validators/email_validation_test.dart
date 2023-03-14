@@ -6,7 +6,7 @@ void main() {
   late FieldValidation systemUderTest;
 
   setUp(() {
-    systemUderTest = EmailValidation('any_field');
+    systemUderTest = const EmailValidation('any_field');
   });
 
   test('should return null if email is empty', () async {

@@ -6,7 +6,7 @@ void main() {
   late FieldValidation systerUnderTest;
 
   setUp(() {
-    systerUnderTest = RequiredFieldValidation('any_field');
+    systerUnderTest = const RequiredFieldValidation('any_field');
   });
 
   test('should return null if value is not empty', () async {

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:clean_flutter_login_app/domain/entities/authentication_params_entity.dart';
 import 'package:clean_flutter_login_app/domain/usecases/authentication_usecase.dart';
+import 'package:clean_flutter_login_app/domain/usecases/save_current_account.dart';
 import 'package:clean_flutter_login_app/ui/pages/login/login_presenter.dart';
 import 'package:clean_flutter_login_app/utils/domain_error.dart';
 import 'package:get/get.dart';
@@ -13,15 +14,18 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   String? _password;
   final Validation validation;
   final AuthenticationUseCase authentication;
+  final SaveCurrentAccount saveCurrentAccount;
   final _emailError = RxnString();
   final _passwordError = RxnString();
   final _mainError = RxnString();
+  final _navigateTo = RxnString();
   final _isFormValid = false.obs;
   final _isLoading = false.obs;
 
   GetxLoginPresenter({
     required this.validation,
     required this.authentication,
+    required this.saveCurrentAccount,
   });
 
   @override
@@ -40,6 +44,9 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   Stream<String?>? get mainErrorStream => _mainError.stream;
 
   @override
+  Stream<String?>? get navigateToStream => _navigateTo.stream;
+
+  @override
   void validateEmail(String email) {
     _email = email;
     _emailError.value = validation.validate(field: 'email', value: email);
@@ -56,16 +63,18 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
 
   @override
   Future<void> auth() async {
-    _isLoading.value = true;
     try {
-      await authentication.auth(AuthenticationParamsEntity(
+      _isLoading.value = true;
+      final result = await authentication.auth(AuthenticationParamsEntity(
         email: _email!,
         password: _password!,
       ));
+      await saveCurrentAccount.save(result);
+      _navigateTo.value = '/surveys';
     } on DomainError catch (error) {
       _mainError.value = error.description;
+      _isLoading.value = false;
     }
-    _isLoading.value = false;
   }
 
   void _validateForm() {

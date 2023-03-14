@@ -3,6 +3,7 @@ import 'package:clean_flutter_login_app/ui/components/snack_bar_error.dart';
 import 'package:clean_flutter_login_app/ui/pages/login/components/login_text_form_field.dart';
 import 'package:clean_flutter_login_app/ui/pages/login/login_presenter.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../components/headline_1.dart';
 import '../../components/login_header.dart';
@@ -37,9 +38,16 @@ class _LoginPageState extends State<LoginPage> {
               }
             }
           });
+
           widget.presenter?.mainErrorStream?.listen((error) {
             if (error != null) {
               snackBarError(context: context, error: error);
+            }
+          });
+
+          widget.presenter?.navigateToStream?.listen((page) {
+            if (page != null && page.isNotEmpty) {
+              Get.offAllNamed(page);
             }
           });
           return GestureDetector(
