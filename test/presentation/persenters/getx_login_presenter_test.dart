@@ -4,8 +4,9 @@ import 'package:clean_flutter_login_app/domain/usecases/authentication_usecase.d
 import 'package:clean_flutter_login_app/domain/usecases/save_current_account.dart';
 import 'package:clean_flutter_login_app/presentation/dependecies/validation.dart';
 import 'package:clean_flutter_login_app/presentation/presenters/login/getx_login_presenter.dart';
+import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
 import 'package:clean_flutter_login_app/ui/pages/login/login_presenter.dart';
-import 'package:clean_flutter_login_app/utils/domain_error.dart';
+import 'package:clean_flutter_login_app/domain/helpers/errors/domain_error.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -30,7 +31,7 @@ void main() {
         value: any(named: 'value'),
       ));
 
-  void mockValidation({String? field, String? value}) {
+  void mockValidation({String? field, ValidationError? value}) {
     mockValidationCall(field).thenReturn(value);
   }
 
@@ -78,11 +79,24 @@ void main() {
     verify(() => validation.validate(field: 'email', value: email)).called(1);
   });
 
-  test('should emit a email error if validation fails', () async {
-    mockValidation(value: 'error');
+  test('should emit a invalid field error if email validation fails', () async {
+    mockValidation(value: ValidationError.invalidField);
 
     systemUnderTest.emailErrorStream
-        ?.listen(expectAsync1((error) => expect(error, 'error')));
+        ?.listen(expectAsync1((error) => expect(error, UiError.invalidField)));
+    systemUnderTest.formValidStream
+        ?.listen(expectAsync1((isValid) => expect(isValid, false)));
+
+    systemUnderTest.validateEmail(email);
+    systemUnderTest.validateEmail(email);
+  });
+
+  test('should emit a requiered field error if email validation fails',
+      () async {
+    mockValidation(value: ValidationError.requiredField);
+
+    systemUnderTest.emailErrorStream
+        ?.listen(expectAsync1((error) => expect(error, UiError.requiredField)));
     systemUnderTest.formValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
@@ -108,10 +122,10 @@ void main() {
   });
 
   test('should emit a password error if validation fails', () async {
-    mockValidation(value: 'error');
+    mockValidation(value: ValidationError.requiredField);
 
     systemUnderTest.passwordErrorStream
-        ?.listen(expectAsync1((error) => expect(error, 'error')));
+        ?.listen(expectAsync1((error) => expect(error, UiError.requiredField)));
     systemUnderTest.formValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
@@ -129,15 +143,9 @@ void main() {
     systemUnderTest.validatePassword(password);
   });
 
-  test(
-      'should emit a email error and password error equal null if validation succed',
-      () async {
-    mockValidation(field: 'email', value: 'error');
+  test('should disable form buttom if any field is invalid', () async {
+    mockValidation(field: 'email', value: ValidationError.invalidField);
 
-    systemUnderTest.emailErrorStream
-        ?.listen(expectAsync1((error) => expect(error, 'error')));
-    systemUnderTest.passwordErrorStream
-        ?.listen(expectAsync1((error) => expect(error, null)));
     systemUnderTest.formValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
@@ -145,11 +153,7 @@ void main() {
     systemUnderTest.validatePassword(password);
   });
 
-  test('should emit a a true value to the form if validation succed', () async {
-    systemUnderTest.emailErrorStream
-        ?.listen(expectAsync1((error) => expect(error, null)));
-    systemUnderTest.passwordErrorStream
-        ?.listen(expectAsync1((error) => expect(error, null)));
+  test('should enable form buttom if all fields are valid', () async {
     expectLater(systemUnderTest.formValidStream, emitsInOrder([false, true]));
 
     systemUnderTest.validateEmail(email);
@@ -184,8 +188,8 @@ void main() {
     systemUnderTest.validatePassword(password);
 
     expectLater(systemUnderTest.loadingStream, emitsInOrder([true, false]));
-    systemUnderTest.mainErrorStream?.listen(expectAsync1((error) =>
-        expect(error, 'Algo inesperado aconteceu. Tente novamente em breve')));
+    systemUnderTest.mainErrorStream
+        ?.listen(expectAsync1((error) => expect(error, UiError.unexpected)));
 
     await systemUnderTest.auth();
   });
@@ -217,7 +221,7 @@ void main() {
 
     expectLater(systemUnderTest.loadingStream, emitsInOrder([true, false]));
     systemUnderTest.mainErrorStream?.listen(
-        expectAsync1((error) => expect(error, 'Credenciais invalidas')));
+        expectAsync1((error) => expect(error, UiError.invalidCredentials)));
 
     await systemUnderTest.auth();
   });
@@ -229,8 +233,8 @@ void main() {
     systemUnderTest.validatePassword(password);
 
     expectLater(systemUnderTest.loadingStream, emitsInOrder([true, false]));
-    systemUnderTest.mainErrorStream?.listen(expectAsync1((error) =>
-        expect(error, 'Algo inesperado aconteceu. Tente novamente em breve')));
+    systemUnderTest.mainErrorStream
+        ?.listen(expectAsync1((error) => expect(error, UiError.unexpected)));
 
     await systemUnderTest.auth();
   });

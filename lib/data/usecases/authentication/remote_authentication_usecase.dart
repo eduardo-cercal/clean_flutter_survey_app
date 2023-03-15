@@ -2,7 +2,7 @@ import 'package:clean_flutter_login_app/data/http/http.error.dart';
 import 'package:clean_flutter_login_app/data/models/authentication_params_model.dart';
 import 'package:clean_flutter_login_app/domain/entities/account_entity.dart';
 import 'package:clean_flutter_login_app/domain/usecases/authentication_usecase.dart';
-import 'package:clean_flutter_login_app/utils/domain_error.dart';
+import 'package:clean_flutter_login_app/domain/helpers/errors/domain_error.dart';
 
 import '../../../domain/entities/authentication_params_entity.dart';
 import '../../http/http_client.dart';

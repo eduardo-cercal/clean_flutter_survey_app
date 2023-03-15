@@ -2,7 +2,7 @@ import 'package:clean_flutter_login_app/data/cache/save_secure_cache_storage.dar
 import 'package:clean_flutter_login_app/data/usecases/save_current_account/local_save_current_account.dart';
 import 'package:clean_flutter_login_app/domain/entities/account_entity.dart';
 import 'package:clean_flutter_login_app/domain/usecases/save_current_account.dart';
-import 'package:clean_flutter_login_app/utils/domain_error.dart';
+import 'package:clean_flutter_login_app/domain/helpers/errors/domain_error.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';

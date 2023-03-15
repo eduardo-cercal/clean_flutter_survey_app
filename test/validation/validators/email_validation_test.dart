@@ -1,4 +1,5 @@
-import 'package:clean_flutter_login_app/validation/validators/dependencies/field_validation.dart';
+import 'package:clean_flutter_login_app/presentation/dependecies/validation.dart';
+import 'package:clean_flutter_login_app/validation/dependencies/field_validation.dart';
 import 'package:clean_flutter_login_app/validation/validators/email_validation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -30,6 +31,6 @@ void main() {
   test('should return error if email is invalid', () async {
     final result = systemUderTest.validate('eddy-dudu');
 
-    expect(result, 'campo invalido');
+    expect(result, ValidationError.invalidField);
   });
 }

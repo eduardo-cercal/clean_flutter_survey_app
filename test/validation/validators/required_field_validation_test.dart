@@ -1,4 +1,5 @@
-import 'package:clean_flutter_login_app/validation/validators/dependencies/field_validation.dart';
+import 'package:clean_flutter_login_app/presentation/dependecies/validation.dart';
+import 'package:clean_flutter_login_app/validation/dependencies/field_validation.dart';
 import 'package:clean_flutter_login_app/validation/validators/required_field_validation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -18,12 +19,12 @@ void main() {
   test('should return error if value is empty', () async {
     final result = systerUnderTest.validate('');
 
-    expect(result, 'campo obrigatorio');
+    expect(result, ValidationError.requiredField);
   });
 
   test('should return error if value null', () async {
     final result = systerUnderTest.validate(null);
 
-    expect(result, 'campo obrigatorio');
+    expect(result, ValidationError.requiredField);
   });
 }

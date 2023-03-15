@@ -14,7 +14,7 @@ class GetxSplashPresenter extends GetxController implements SplashPresenter {
 
   @override
   Future<void> checkAccount({int durationInSeconds = 2}) async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: durationInSeconds));
     try {
       final result = await loadCurrentAccount.load();
       _navigateTo.value = result != null ? '/survey' : '/login';

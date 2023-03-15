@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:clean_flutter_login_app/domain/entities/authentication_params_entity.dart';
 import 'package:clean_flutter_login_app/domain/usecases/authentication_usecase.dart';
+import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
 import 'package:clean_flutter_login_app/ui/pages/login/login_presenter.dart';
-import 'package:clean_flutter_login_app/utils/domain_error.dart';
+import 'package:clean_flutter_login_app/domain/helpers/errors/domain_error.dart';
 
 import '../../dependecies/validation.dart';
 import 'login_state.dart';
@@ -21,11 +22,11 @@ class StreamLoginPresenter implements LoginPresenter {
   });
 
   @override
-  Stream<String?>? get emailErrorStream =>
+  Stream<UiError?>? get emailErrorStream =>
       controller?.stream.map((state) => state.emailError).distinct();
 
   @override
-  Stream<String?>? get passwordErrorStream =>
+  Stream<UiError?>? get passwordErrorStream =>
       controller?.stream.map((state) => state.passwordError).distinct();
 
   @override
@@ -37,15 +38,18 @@ class StreamLoginPresenter implements LoginPresenter {
       controller?.stream.map((state) => state.isLoading).distinct();
 
   @override
-  Stream<String?>? get mainErrorStream =>
+  Stream<UiError?>? get mainErrorStream =>
       controller?.stream.map((state) => state.mainError).distinct();
+
+  @override
+  Stream<String?>? get navigateToStream => throw UnimplementedError();
 
   void update() => controller?.add(loginState);
 
   @override
   void validateEmail(String email) {
     loginState.email = email;
-    loginState.emailError = validation.validate(field: 'email', value: email);
+    loginState.emailError = validateField(field: 'email', value: email);
     update();
   }
 
@@ -53,7 +57,7 @@ class StreamLoginPresenter implements LoginPresenter {
   void validatePassword(String password) {
     loginState.password = password;
     loginState.passwordError =
-        validation.validate(field: 'password', value: password);
+        validateField(field: 'password', value: password);
     update();
   }
 
@@ -67,7 +71,14 @@ class StreamLoginPresenter implements LoginPresenter {
         password: loginState.password!,
       ));
     } on DomainError catch (error) {
-      loginState.mainError = error.description;
+      switch (error) {
+        case DomainError.invalidCredentials:
+          loginState.mainError = UiError.invalidCredentials;
+          break;
+        default:
+          loginState.mainError = UiError.unexpected;
+          break;
+      }
     }
     loginState.isLoading = false;
     update();
@@ -80,6 +91,16 @@ class StreamLoginPresenter implements LoginPresenter {
   }
 
   @override
-  // TODO: implement navigateToStream
-  Stream<String?>? get navigateToStream => throw UnimplementedError();
+  UiError? validateField({required String field, required String value}) {
+    final error = validation.validate(field: field, value: value);
+
+    switch (error) {
+      case ValidationError.requiredField:
+        return UiError.requiredField;
+      case ValidationError.invalidField:
+        return UiError.invalidField;
+      default:
+        return null;
+    }
+  }
 }

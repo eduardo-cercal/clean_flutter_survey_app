@@ -1,3 +1,4 @@
+import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
 import 'package:flutter/material.dart';
 
 class LoginTextFormField extends StatelessWidget {
@@ -5,7 +6,7 @@ class LoginTextFormField extends StatelessWidget {
   final IconData icon;
   final bool isPassword;
   final Function(String text)? onChanged;
-  final Stream<String?>? stream;
+  final Stream<UiError?>? stream;
 
   const LoginTextFormField({
     super.key,
@@ -18,7 +19,7 @@ class LoginTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<String?>(
+    return StreamBuilder<UiError?>(
         stream: stream,
         builder: (context, snapshot) {
           return TextFormField(
@@ -28,7 +29,7 @@ class LoginTextFormField extends StatelessWidget {
                 icon,
                 color: Theme.of(context).primaryColorLight,
               ),
-              errorText: snapshot.data?.isEmpty == true ? null : snapshot.data,
+              errorText: snapshot.hasData ? snapshot.data?.description : null,
             ),
             obscureText: isPassword,
             onChanged: onChanged,

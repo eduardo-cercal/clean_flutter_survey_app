@@ -1,5 +1,5 @@
 import '../../presentation/dependecies/validation.dart';
-import 'dependencies/field_validation.dart';
+import '../dependencies/field_validation.dart';
 
 class ValidationComposite implements Validation {
   final List<FieldValidation> validations;
@@ -7,11 +7,11 @@ class ValidationComposite implements Validation {
   ValidationComposite(this.validations);
 
   @override
-  String? validate({required String field, required String value}) {
+  ValidationError? validate({required String field, required String value}) {
     for (FieldValidation validation
         in validations.where((element) => element.field == field)) {
-      final String? error = validation.validate(value);
-      if (error != null && error.isNotEmpty) return error;
+      final ValidationError? error = validation.validate(value);
+      if (error != null) return error;
     }
     return null;
   }

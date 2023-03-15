@@ -1,5 +1,5 @@
 import 'package:clean_flutter_login_app/presentation/dependecies/validation.dart';
-import 'package:clean_flutter_login_app/validation/validators/dependencies/field_validation.dart';
+import 'package:clean_flutter_login_app/validation/dependencies/field_validation.dart';
 import 'package:clean_flutter_login_app/validation/validators/validation_composite.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -12,15 +12,15 @@ void main() {
   late FieldValidation validation3;
   late Validation systemUnderTest;
 
-  void mockValidation1({String? error}) {
+  void mockValidation1({ValidationError? error}) {
     when(() => validation1.validate(any())).thenReturn(error);
   }
 
-  void mockValidation2({String? error}) {
+  void mockValidation2({ValidationError? error}) {
     when(() => validation2.validate(any())).thenReturn(error);
   }
 
-  void mockValidation3({String? error}) {
+  void mockValidation3({ValidationError? error}) {
     when(() => validation3.validate(any())).thenReturn(error);
   }
 
@@ -47,8 +47,6 @@ void main() {
   });
 
   test('should return null if all validations returns null or empty', () async {
-    mockValidation2(error: '');
-
     final result =
         systemUnderTest.validate(field: 'any_field', value: 'any_value');
 
@@ -56,13 +54,13 @@ void main() {
   });
 
   test('should return the first error on the list', () async {
-    mockValidation1(error: 'error_1');
-    mockValidation2(error: 'error_2');
-    mockValidation3(error: 'error_3');
+    mockValidation1(error: ValidationError.invalidField);
+    mockValidation2(error: ValidationError.requiredField);
+    mockValidation3(error: ValidationError.invalidField);
 
     final result =
         systemUnderTest.validate(field: 'any_field', value: 'any_value');
 
-    expect(result, 'error_2');
+    expect(result, ValidationError.requiredField);
   });
 }

@@ -1,6 +1,7 @@
+import 'package:clean_flutter_login_app/presentation/dependecies/validation.dart';
 import 'package:equatable/equatable.dart';
 
-import 'dependencies/field_validation.dart';
+import '../dependencies/field_validation.dart';
 
 class RequiredFieldValidation extends Equatable implements FieldValidation {
   final String fieldValidator;
@@ -11,8 +12,8 @@ class RequiredFieldValidation extends Equatable implements FieldValidation {
   String get field => fieldValidator;
 
   @override
-  String? validate(String? value) {
-    return value?.isNotEmpty == true ? null : 'campo obrigatorio';
+  ValidationError? validate(String? value) {
+    return value?.isNotEmpty == true ? null : ValidationError.requiredField;
   }
 
   @override

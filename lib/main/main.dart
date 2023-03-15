@@ -1,3 +1,4 @@
+import 'package:clean_flutter_login_app/ui/helpers/i18n/resources.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';

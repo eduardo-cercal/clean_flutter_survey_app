@@ -1,10 +1,12 @@
+import '../../../ui/helpers/errors/ui_error.dart';
+
 class LoginState {
-  String? emailError;
+  UiError? emailError;
   String? email;
-  String? passwordError;
+  UiError? passwordError;
   String? password;
   bool isLoading = false;
-  String? mainError;
+  UiError? mainError;
 
   bool get isFormValid =>
       emailError == null &&

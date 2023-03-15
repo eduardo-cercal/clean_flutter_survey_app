@@ -1,6 +1,6 @@
 import '../../../domain/entities/account_entity.dart';
 import '../../../domain/usecases/save_current_account.dart';
-import '../../../utils/domain_error.dart';
+import '../../../domain/helpers/errors/domain_error.dart';
 import '../../cache/save_secure_cache_storage.dart';
 
 class LocalSaveCurrentAccount implements SaveCurrentAccount {

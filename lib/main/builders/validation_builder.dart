@@ -1,4 +1,4 @@
-import 'package:clean_flutter_login_app/validation/validators/dependencies/field_validation.dart';
+import 'package:clean_flutter_login_app/validation/dependencies/field_validation.dart';
 import 'package:clean_flutter_login_app/validation/validators/email_validation.dart';
 import 'package:clean_flutter_login_app/validation/validators/required_field_validation.dart';
 

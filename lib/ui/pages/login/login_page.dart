@@ -1,10 +1,12 @@
 import 'package:clean_flutter_login_app/ui/components/loading_dialog.dart';
 import 'package:clean_flutter_login_app/ui/components/snack_bar_error.dart';
+import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
 import 'package:clean_flutter_login_app/ui/pages/login/components/login_text_form_field.dart';
 import 'package:clean_flutter_login_app/ui/pages/login/login_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../helpers/i18n/resources.dart';
 import '../../components/headline_1.dart';
 import '../../components/login_header.dart';
 
@@ -41,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
 
           widget.presenter?.mainErrorStream?.listen((error) {
             if (error != null) {
-              snackBarError(context: context, error: error);
+              snackBarError(context: context, error: error.description);
             }
           });
 
@@ -96,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
                           TextButton.icon(
                             onPressed: () {},
                             icon: const Icon(Icons.person),
-                            label: const Text('Criar conta'),
+                            label: Text(R.strings.addAccount),
                           ),
                         ],
                       ),
