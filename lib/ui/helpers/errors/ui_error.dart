@@ -5,6 +5,7 @@ enum UiError {
   invalidField,
   unexpected,
   invalidCredentials,
+  emailInUse,
 }
 
 extension UiErrorExtension on UiError {
@@ -13,11 +14,13 @@ extension UiErrorExtension on UiError {
       case UiError.requiredField:
         return R.strings.msgRequiredField;
       case UiError.invalidField:
-        return 'Campo invalido';
+        return R.strings.msgInvalidField;
       case UiError.invalidCredentials:
-        return 'Credenciais invalidas';
+        return R.strings.msgInvalidCredentials;
+      case UiError.emailInUse:
+        return R.strings.msgEmailInUse;
       default:
-        return 'Algo inesperado ocorreu. Tente novamente em breve';
+        return R.strings.msgUnexpectedError;
     }
   }
 }
