@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                                 );
                               }),
                           TextButton.icon(
-                            onPressed: () {},
+                            onPressed: widget.presenter?.goToSignUp,
                             icon: const Icon(Icons.person),
                             label: Text(R.strings.addAccount),
                           ),

@@ -22,4 +22,6 @@ abstract class LoginPresenter {
   UiError? validateField({required String field, required String value});
 
   void dispose();
+
+  void goToSignUp();
 }

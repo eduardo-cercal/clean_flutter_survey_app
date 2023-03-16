@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
-import 'package:clean_flutter_login_app/ui/pages/login/login_page.dart';
-import 'package:clean_flutter_login_app/ui/pages/login/login_presenter.dart';
 import 'package:clean_flutter_login_app/ui/pages/signup/signup_page.dart';
 import 'package:clean_flutter_login_app/ui/pages/signup/signup_presenter.dart';
 import 'package:faker/faker.dart';
@@ -371,6 +369,22 @@ void main() {
 
       expect(Get.currentRoute, 'any_route');
       expect(find.text('fake page'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    "Should call goToLogin on link click",
+    (WidgetTester tester) async {
+      await loadPage(tester);
+      when(() => presenter.signUp()).thenAnswer((_) async {});
+
+      final buttom = find.text('Login');
+      await tester.pump();
+      await tester.ensureVisible(buttom);
+      await tester.tap(buttom);
+      await tester.pump();
+
+      verify(() => presenter.goToLogin()).called(1);
     },
   );
 }

@@ -1,8 +1,6 @@
 import 'package:clean_flutter_login_app/ui/components/loading_dialog.dart';
 import 'package:clean_flutter_login_app/ui/components/snack_bar_error.dart';
 import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
-import 'package:clean_flutter_login_app/ui/pages/login/components/login_text_form_field.dart';
-import 'package:clean_flutter_login_app/ui/pages/login/login_presenter.dart';
 import 'package:clean_flutter_login_app/ui/pages/signup/signup_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -118,7 +116,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 );
                               }),
                           TextButton.icon(
-                            onPressed: () {},
+                            onPressed: widget.presenter?.goToLogin,
                             icon: const Icon(Icons.exit_to_app),
                             label: Text(R.strings.login),
                           ),

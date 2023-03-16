@@ -231,6 +231,22 @@ void main() {
   );
 
   testWidgets(
+    "Should call goToSignUp on link click",
+    (WidgetTester tester) async {
+      await loadPage(tester);
+      when(() => presenter.auth()).thenAnswer((_) async {});
+
+      final buttom = find.text('Criar conta');
+      await tester.pump();
+      await tester.ensureVisible(buttom);
+      await tester.tap(buttom);
+      await tester.pump();
+
+      verify(() => presenter.goToSignUp()).called(1);
+    },
+  );
+
+  testWidgets(
     "Should present loading",
     (WidgetTester tester) async {
       await loadPage(tester);
@@ -264,7 +280,7 @@ void main() {
       mainErrorController.add(UiError.invalidCredentials);
       await tester.pump();
 
-      expect(find.text('Credenciais invalidas'), findsOneWidget);
+      expect(find.text('Credencias invalidas'), findsOneWidget);
     },
   );
 
@@ -276,7 +292,7 @@ void main() {
       mainErrorController.add(UiError.unexpected);
       await tester.pump();
 
-      expect(find.text('Algo inesperado ocorreu. Tente novamente em breve'),
+      expect(find.text('Algo inesperado aconteceu. Tente novamente em breve'),
           findsOneWidget);
     },
   );

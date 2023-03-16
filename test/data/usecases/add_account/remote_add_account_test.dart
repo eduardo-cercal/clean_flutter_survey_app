@@ -1,9 +1,7 @@
 import 'package:clean_flutter_login_app/data/http/http.error.dart';
 import 'package:clean_flutter_login_app/data/http/http_client.dart';
 import 'package:clean_flutter_login_app/data/usecases/add_account/remote_add_account.dart';
-import 'package:clean_flutter_login_app/data/usecases/authentication/remote_authentication_usecase.dart';
 import 'package:clean_flutter_login_app/domain/entities/add_account_params_entity.dart';
-import 'package:clean_flutter_login_app/domain/entities/authentication_params_entity.dart';
 import 'package:clean_flutter_login_app/data/helpers/constants.dart';
 import 'package:clean_flutter_login_app/domain/helpers/errors/domain_error.dart';
 import 'package:faker/faker.dart';

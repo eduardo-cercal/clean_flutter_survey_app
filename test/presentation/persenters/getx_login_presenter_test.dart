@@ -238,4 +238,11 @@ void main() {
 
     await systemUnderTest.auth();
   });
+
+  test('should go to sign up page on link click', () async {
+    systemUnderTest.navigateToStream
+        ?.listen(expectAsync1((page) => expect(page, '/signup')));
+
+    systemUnderTest.goToSignUp();
+  });
 }
