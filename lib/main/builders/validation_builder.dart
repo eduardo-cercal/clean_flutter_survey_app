@@ -1,5 +1,6 @@
 import 'package:clean_flutter_login_app/validation/dependencies/field_validation.dart';
 import 'package:clean_flutter_login_app/validation/validators/email_validation.dart';
+import 'package:clean_flutter_login_app/validation/validators/min_length_validation.dart';
 import 'package:clean_flutter_login_app/validation/validators/required_field_validation.dart';
 
 class ValidationBuilder {
@@ -22,6 +23,14 @@ class ValidationBuilder {
 
   ValidationBuilder email() {
     validations.add(EmailValidation(fieldName));
+    return this;
+  }
+
+  ValidationBuilder minLength(int size) {
+    validations.add(MinLengthValidation(
+      fieldValidate: fieldName,
+      size: size,
+    ));
     return this;
   }
 

@@ -19,7 +19,7 @@ abstract class LoginPresenter {
 
   Future<void> auth();
 
-  UiError? validateField({required String field, required String value});
+  UiError? validateField(String field);
 
   void dispose();
 

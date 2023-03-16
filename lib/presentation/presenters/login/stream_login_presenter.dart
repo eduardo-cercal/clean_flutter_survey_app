@@ -49,15 +49,14 @@ class StreamLoginPresenter implements LoginPresenter {
   @override
   void validateEmail(String email) {
     loginState.email = email;
-    loginState.emailError = validateField(field: 'email', value: email);
+    loginState.emailError = validateField('email');
     update();
   }
 
   @override
   void validatePassword(String password) {
     loginState.password = password;
-    loginState.passwordError =
-        validateField(field: 'password', value: password);
+    loginState.passwordError = validateField('password');
     update();
   }
 
@@ -91,8 +90,12 @@ class StreamLoginPresenter implements LoginPresenter {
   }
 
   @override
-  UiError? validateField({required String field, required String value}) {
-    final error = validation.validate(field: field, value: value);
+  UiError? validateField(String field) {
+    final map = {
+      'email': loginState.email,
+      'password': loginState.password,
+    };
+    final error = validation.validate(field: field, input: map);
 
     switch (error) {
       case ValidationError.requiredField:

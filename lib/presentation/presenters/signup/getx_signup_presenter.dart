@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:clean_flutter_login_app/domain/usecases/add_account_usecase.dart';
-import 'package:clean_flutter_login_app/domain/usecases/authentication_usecase.dart';
 import 'package:clean_flutter_login_app/domain/usecases/save_current_account.dart';
 import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
 
@@ -86,7 +85,7 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   @override
   void validateEmail(String email) {
     _email = email;
-    _emailError.value = validateField(field: 'email', value: email);
+    _emailError.value = validateField('email');
     _validateForm();
   }
 
@@ -102,8 +101,14 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   }
 
   @override
-  UiError? validateField({required String field, required String value}) {
-    final error = validation.validate(field: field, value: value);
+  UiError? validateField(String field) {
+    final map = {
+      'name': _name,
+      'email': _email,
+      'password': _password,
+      'passwordConfirmation': _confirmPassword,
+    };
+    final error = validation.validate(field: field, input: map);
 
     switch (error) {
       case ValidationError.requiredField:
@@ -118,24 +123,21 @@ class GetxSignUpPresenter extends GetxController implements SignUpPresenter {
   @override
   void validateName(String name) {
     _name = name;
-    _nameError.value = validateField(field: 'name', value: name);
+    _nameError.value = validateField('name');
     _validateForm();
   }
 
   @override
   void validatePassword(String password) {
     _password = password;
-    _passwordError.value = validateField(field: 'password', value: password);
+    _passwordError.value = validateField('password');
     _validateForm();
   }
 
   @override
   void validatePasswordConfirmation(String passwordConfirmation) {
     _confirmPassword = passwordConfirmation;
-    _passwordConfirmationError.value = validateField(
-      field: 'passwordConfirmation',
-      value: passwordConfirmation,
-    );
+    _passwordConfirmationError.value = validateField('passwordConfirmation');
     _validateForm();
   }
 

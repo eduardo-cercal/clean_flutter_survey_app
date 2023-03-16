@@ -50,14 +50,14 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   @override
   void validateEmail(String email) {
     _email = email;
-    _emailError.value = validateField(field: 'email', value: email);
+    _emailError.value = validateField('email');
     _validateForm();
   }
 
   @override
   void validatePassword(String password) {
     _password = password;
-    _passwordError.value = validateField(field: 'password', value: password);
+    _passwordError.value = validateField('password');
     _validateForm();
   }
 
@@ -92,8 +92,12 @@ class GetxLoginPresenter extends GetxController implements LoginPresenter {
   }
 
   @override
-  UiError? validateField({required String field, required String value}) {
-    final error = validation.validate(field: field, value: value);
+  UiError? validateField(String field) {
+    final map = {
+      'email': _email,
+      'password': _password,
+    };
+    final error = validation.validate(field: field, input: map);
 
     switch (error) {
       case ValidationError.requiredField:

@@ -47,8 +47,7 @@ void main() {
   });
 
   test('should return null if all validations returns null or empty', () async {
-    final result =
-        systemUnderTest.validate(field: 'any_field', value: 'any_value');
+    final result = systemUnderTest.validate(field: 'any_field', input: {});
 
     expect(result, null);
   });
@@ -58,8 +57,7 @@ void main() {
     mockValidation2(error: ValidationError.requiredField);
     mockValidation3(error: ValidationError.invalidField);
 
-    final result =
-        systemUnderTest.validate(field: 'any_field', value: 'any_value');
+    final result = systemUnderTest.validate(field: 'any_field', input: {});
 
     expect(result, ValidationError.requiredField);
   });

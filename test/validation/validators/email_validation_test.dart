@@ -11,25 +11,26 @@ void main() {
   });
 
   test('should return null if email is empty', () async {
-    final result = systemUderTest.validate('');
+    final result = systemUderTest.validate({'any_field': ''});
 
     expect(result, null);
   });
 
   test('should return null if email is null', () async {
-    final result = systemUderTest.validate(null);
+    final result = systemUderTest.validate({'any_field': null});
 
     expect(result, null);
   });
 
   test('should return null if email is valid', () async {
-    final result = systemUderTest.validate('eddy-dudu@hotmail.com');
+    final result =
+        systemUderTest.validate({'any_field': 'eddy-dudu@hotmail.com'});
 
     expect(result, null);
   });
 
   test('should return error if email is invalid', () async {
-    final result = systemUderTest.validate('eddy-dudu');
+    final result = systemUderTest.validate({'any_field': 'eddy-dudu'});
 
     expect(result, ValidationError.invalidField);
   });

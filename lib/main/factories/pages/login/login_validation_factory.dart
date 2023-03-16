@@ -8,5 +8,5 @@ Validation makeLoginValidation() => ValidationComposite(makeLoginValidations());
 
 List<FieldValidation> makeLoginValidations() => [
       ...ValidationBuilder.field('email').required().email().build(),
-      ...ValidationBuilder.field('password').required().build(),
+      ...ValidationBuilder.field('password').required().minLength(3).build(),
     ];

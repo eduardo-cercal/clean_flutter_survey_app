@@ -27,7 +27,7 @@ abstract class SignUpPresenter {
 
   Future<void> signUp();
 
-  UiError? validateField({required String field, required String value});
+  UiError? validateField(String field);
 
   void dispose();
 

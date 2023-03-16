@@ -28,7 +28,7 @@ void main() {
 
   When mockValidationCall(String? field) => when(() => validation.validate(
         field: field ?? any(named: 'field'),
-        value: any(named: 'value'),
+        input: any(named: 'input'),
       ));
 
   void mockValidation({String? field, ValidationError? value}) {
@@ -56,6 +56,11 @@ void main() {
     mockSaveCurrentAccountCall().thenThrow(DomainError.unexpected);
   }
 
+  Map mockInput({String? email, String? password}) => {
+        'email': email,
+        'password': password,
+      };
+
   setUp(() {
     validation = MockValidation();
     authentication = MockAuthentication();
@@ -76,7 +81,9 @@ void main() {
   test('should call validation with correct email', () async {
     systemUnderTest.validateEmail(email);
 
-    verify(() => validation.validate(field: 'email', value: email)).called(1);
+    verify(() =>
+            validation.validate(field: 'email', input: mockInput(email: email)))
+        .called(1);
   });
 
   test('should emit a invalid field error if email validation fails', () async {
@@ -117,8 +124,8 @@ void main() {
   test('should call validation with correct password', () async {
     systemUnderTest.validatePassword(password);
 
-    verify(() => validation.validate(field: 'password', value: password))
-        .called(1);
+    verify(() => validation.validate(
+        field: 'password', input: mockInput(password: password))).called(1);
   });
 
   test('should emit a password error if validation fails', () async {

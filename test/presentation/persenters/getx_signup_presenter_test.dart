@@ -1,12 +1,9 @@
 import 'package:clean_flutter_login_app/domain/entities/account_entity.dart';
 import 'package:clean_flutter_login_app/domain/entities/add_account_params_entity.dart';
-import 'package:clean_flutter_login_app/domain/entities/authentication_params_entity.dart';
 import 'package:clean_flutter_login_app/domain/helpers/errors/domain_error.dart';
 import 'package:clean_flutter_login_app/domain/usecases/add_account_usecase.dart';
-import 'package:clean_flutter_login_app/domain/usecases/authentication_usecase.dart';
 import 'package:clean_flutter_login_app/domain/usecases/save_current_account.dart';
 import 'package:clean_flutter_login_app/presentation/dependecies/validation.dart';
-import 'package:clean_flutter_login_app/presentation/presenters/login/getx_login_presenter.dart';
 import 'package:clean_flutter_login_app/presentation/presenters/signup/getx_signup_presenter.dart';
 import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
 
@@ -34,7 +31,7 @@ void main() {
 
   When mockValidationCall(String? field) => when(() => validation.validate(
         field: field ?? any(named: 'field'),
-        value: any(named: 'value'),
+        input: any(named: 'input'),
       ));
 
   void mockValidation({String? field, ValidationError? value}) {
@@ -62,6 +59,18 @@ void main() {
     mockSaveCurrentAccountCall().thenThrow(DomainError.unexpected);
   }
 
+  Map mockInput(
+          {String? name,
+          String? email,
+          String? password,
+          String? passwordConfirmation}) =>
+      {
+        'name': name,
+        'email': email,
+        'password': password,
+        'passwordConfirmation': passwordConfirmation,
+      };
+
   setUp(() {
     validation = MockValidation();
     addAccount = MockAddAccount();
@@ -86,7 +95,9 @@ void main() {
   test('should call validation with correct name', () async {
     systemUnderTest.validateName(name);
 
-    verify(() => validation.validate(field: 'name', value: name)).called(1);
+    verify(() =>
+            validation.validate(field: 'name', input: mockInput(name: name)))
+        .called(1);
   });
 
   test('should emit a invalid field error if name validation fails', () async {
@@ -127,7 +138,9 @@ void main() {
   test('should call validation with correct email', () async {
     systemUnderTest.validateEmail(email);
 
-    verify(() => validation.validate(field: 'email', value: email)).called(1);
+    verify(() =>
+            validation.validate(field: 'email', input: mockInput(email: email)))
+        .called(1);
   });
 
   test('should emit a invalid field error if email validation fails', () async {
@@ -168,8 +181,8 @@ void main() {
   test('should call validation with correct password', () async {
     systemUnderTest.validatePassword(password);
 
-    verify(() => validation.validate(field: 'password', value: password))
-        .called(1);
+    verify(() => validation.validate(
+        field: 'password', input: mockInput(password: password))).called(1);
   });
 
   test('should emit a invalid field error if password validation fails',
@@ -211,7 +224,9 @@ void main() {
     systemUnderTest.validatePasswordConfirmation(passwordConfirmation);
 
     verify(() => validation.validate(
-        field: 'passwordConfirmation', value: passwordConfirmation)).called(1);
+            field: 'passwordConfirmation',
+            input: mockInput(passwordConfirmation: passwordConfirmation)))
+        .called(1);
   });
 
   test('should emit a invalid field error if password validation fails',

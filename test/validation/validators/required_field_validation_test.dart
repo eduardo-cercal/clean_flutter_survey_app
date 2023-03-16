@@ -11,13 +11,13 @@ void main() {
   });
 
   test('should return null if value is not empty', () async {
-    final result = systerUnderTest.validate('any_value');
+    final result = systerUnderTest.validate({'any_field': 'any_value'});
 
     expect(result, null);
   });
 
   test('should return error if value is empty', () async {
-    final result = systerUnderTest.validate('');
+    final result = systerUnderTest.validate({'any_field': ''});
 
     expect(result, ValidationError.requiredField);
   });

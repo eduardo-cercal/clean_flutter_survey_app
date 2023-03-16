@@ -12,15 +12,17 @@ class EmailValidation extends Equatable implements FieldValidation {
   String get field => fieldValidator;
 
   @override
-  ValidationError? validate(String? value) {
+  ValidationError? validate(Map? input) {
     final regex = RegExp(
         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
-    if (value == null) return null;
+    if (input?[fieldValidator] == null) return null;
 
-    if (value.isEmpty) return null;
+    if (input?[fieldValidator].isEmpty) return null;
 
-    return regex.hasMatch(value) ? null : ValidationError.invalidField;
+    return regex.hasMatch(input?[fieldValidator])
+        ? null
+        : ValidationError.invalidField;
   }
 
   @override
