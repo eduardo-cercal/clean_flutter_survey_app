@@ -7,7 +7,7 @@ void main() {
   late FieldValidation systemUnderTest;
 
   setUp(() {
-    systemUnderTest = CompareFieldsValidation(
+    systemUnderTest = const CompareFieldsValidation(
         fieldValidate: 'any_field', fieldToCompare: 'other_field');
   });
 

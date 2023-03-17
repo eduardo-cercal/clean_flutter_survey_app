@@ -1,4 +1,3 @@
-import 'package:clean_flutter_login_app/main/factories/pages/login/login_validation_factory.dart';
 import 'package:clean_flutter_login_app/main/factories/pages/sign_up/sign_up_validation_factory.dart';
 import 'package:clean_flutter_login_app/validation/validators/compare_fields_validation.dart';
 import 'package:clean_flutter_login_app/validation/validators/email_validation.dart';

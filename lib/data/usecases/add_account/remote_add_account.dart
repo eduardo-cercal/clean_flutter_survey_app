@@ -9,7 +9,7 @@ import '../../models/account_model.dart';
 import '../../models/add_account_params_model.dart';
 
 class RemoteAddAccount implements AddAccountUseCase {
-  final HttpClient httpClient;
+  final HttpClient<Map<String, dynamic>?> httpClient;
   final String url;
 
   RemoteAddAccount({

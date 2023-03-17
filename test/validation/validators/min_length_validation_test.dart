@@ -8,7 +8,7 @@ void main() {
   late FieldValidation systemUnderTest;
 
   setUp(() {
-    systemUnderTest = MinLengthValidation(fieldValidate: 'any_field', size: 5);
+    systemUnderTest = const MinLengthValidation(fieldValidate: 'any_field', size: 5);
   });
 
   test('should return error if value is empty', () async {

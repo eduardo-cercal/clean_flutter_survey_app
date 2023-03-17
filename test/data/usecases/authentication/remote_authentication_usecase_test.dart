@@ -8,10 +8,11 @@ import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockHttpClient extends Mock implements HttpClient {}
+class MockHttpClient extends Mock
+    implements HttpClient<Map<String, dynamic>?> {}
 
 void main() {
-  late HttpClient httpClient;
+  late HttpClient<Map<String, dynamic>?> httpClient;
   late String url;
   late RemoteAuthentication systemUnderTest;
   late AuthenticationParamsEntity params;
