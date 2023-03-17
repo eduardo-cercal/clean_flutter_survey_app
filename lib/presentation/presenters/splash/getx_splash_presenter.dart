@@ -17,7 +17,7 @@ class GetxSplashPresenter extends GetxController implements SplashPresenter {
     await Future.delayed(Duration(seconds: durationInSeconds));
     try {
       final result = await loadCurrentAccount.load();
-      _navigateTo.value = result != null ? '/survey' : '/login';
+      _navigateTo.value = result?.token != null ? '/survey' : '/login';
     } catch (error) {
       _navigateTo.value = '/login';
     }

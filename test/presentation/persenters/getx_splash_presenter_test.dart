@@ -42,8 +42,18 @@ void main() {
     await systemUnderTest.checkAccount();
   });
 
-  test('should go to login page on success', () async {
+  test('should go to login page on null result', () async {
     mockLoadCurrentAccount(null);
+
+    systemUnderTest.navigateToStream.listen(expectAsync1(
+      (page) => expect(page, '/login'),
+    ));
+
+    await systemUnderTest.checkAccount();
+  });
+
+  test('should go to login page on null token', () async {
+    mockLoadCurrentAccount(const AccountEntity(null));
 
     systemUnderTest.navigateToStream.listen(expectAsync1(
       (page) => expect(page, '/login'),

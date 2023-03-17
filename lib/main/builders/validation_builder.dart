@@ -1,4 +1,5 @@
 import 'package:clean_flutter_login_app/validation/dependencies/field_validation.dart';
+import 'package:clean_flutter_login_app/validation/validators/compare_fields_validation.dart';
 import 'package:clean_flutter_login_app/validation/validators/email_validation.dart';
 import 'package:clean_flutter_login_app/validation/validators/min_length_validation.dart';
 import 'package:clean_flutter_login_app/validation/validators/required_field_validation.dart';
@@ -30,6 +31,14 @@ class ValidationBuilder {
     validations.add(MinLengthValidation(
       fieldValidate: fieldName,
       size: size,
+    ));
+    return this;
+  }
+
+  ValidationBuilder sameAs(String fieldToCompare) {
+    validations.add(CompareFieldsValidation(
+      fieldValidate: fieldName,
+      fieldToCompare: fieldToCompare,
     ));
     return this;
   }

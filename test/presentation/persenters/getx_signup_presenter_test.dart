@@ -323,9 +323,9 @@ void main() {
     systemUnderTest.validatePassword(password);
     systemUnderTest.validatePasswordConfirmation(passwordConfirmation);
 
+    expectLater(systemUnderTest.mainErrorStream,
+        emitsInOrder([null, UiError.unexpected]));
     expectLater(systemUnderTest.loadingStream, emitsInOrder([true, false]));
-    systemUnderTest.mainErrorStream
-        ?.listen(expectAsync1((error) => expect(error, UiError.unexpected)));
 
     await systemUnderTest.signUp();
   });
@@ -362,8 +362,8 @@ void main() {
     systemUnderTest.validatePasswordConfirmation(passwordConfirmation);
 
     expectLater(systemUnderTest.loadingStream, emitsInOrder([true, false]));
-    systemUnderTest.mainErrorStream
-        ?.listen(expectAsync1((error) => expect(error, UiError.emailInUse)));
+    expectLater(systemUnderTest.mainErrorStream,
+        emitsInOrder([null, UiError.emailInUse]));
 
     await systemUnderTest.signUp();
   });
@@ -377,8 +377,8 @@ void main() {
     systemUnderTest.validatePasswordConfirmation(passwordConfirmation);
 
     expectLater(systemUnderTest.loadingStream, emitsInOrder([true, false]));
-    systemUnderTest.mainErrorStream
-        ?.listen(expectAsync1((error) => expect(error, UiError.unexpected)));
+    expectLater(systemUnderTest.mainErrorStream,
+        emitsInOrder([null, UiError.unexpected]));
 
     await systemUnderTest.signUp();
   });

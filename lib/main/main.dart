@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../ui/components/app_theme.dart';
 import 'factories/pages/login/login_page_factory.dart';
+import 'factories/pages/sign_up/sign_up_page_factory.dart';
 import 'factories/pages/splash/splash_page_factory.dart';
 
 void main() {
@@ -32,6 +33,10 @@ class App extends StatelessWidget {
           name: '/login',
           page: makeLoginPage,
           transition: Transition.fadeIn,
+        ),
+        GetPage(
+          name: '/signup',
+          page: makeSignUpPage,
         ),
         GetPage(
           name: '/surveys',

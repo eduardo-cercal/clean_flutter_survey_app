@@ -195,8 +195,8 @@ void main() {
     systemUnderTest.validatePassword(password);
 
     expectLater(systemUnderTest.loadingStream, emitsInOrder([true, false]));
-    systemUnderTest.mainErrorStream
-        ?.listen(expectAsync1((error) => expect(error, UiError.unexpected)));
+    expectLater(systemUnderTest.mainErrorStream,
+        emitsInOrder([null, UiError.unexpected]));
 
     await systemUnderTest.auth();
   });
@@ -227,8 +227,8 @@ void main() {
     systemUnderTest.validatePassword(password);
 
     expectLater(systemUnderTest.loadingStream, emitsInOrder([true, false]));
-    systemUnderTest.mainErrorStream?.listen(
-        expectAsync1((error) => expect(error, UiError.invalidCredentials)));
+    expectLater(systemUnderTest.mainErrorStream,
+        emitsInOrder([null, UiError.invalidCredentials]));
 
     await systemUnderTest.auth();
   });
@@ -240,8 +240,8 @@ void main() {
     systemUnderTest.validatePassword(password);
 
     expectLater(systemUnderTest.loadingStream, emitsInOrder([true, false]));
-    systemUnderTest.mainErrorStream
-        ?.listen(expectAsync1((error) => expect(error, UiError.unexpected)));
+    expectLater(systemUnderTest.mainErrorStream,
+        emitsInOrder([null, UiError.unexpected]));
 
     await systemUnderTest.auth();
   });
