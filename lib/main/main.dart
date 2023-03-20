@@ -6,6 +6,7 @@ import '../ui/components/app_theme.dart';
 import 'factories/pages/login/login_page_factory.dart';
 import 'factories/pages/sign_up/sign_up_page_factory.dart';
 import 'factories/pages/splash/splash_page_factory.dart';
+import 'factories/pages/surveys/surveys_page_factory.dart';
 
 void main() {
   runApp(const App());
@@ -40,9 +41,7 @@ class App extends StatelessWidget {
         ),
         GetPage(
           name: '/surveys',
-          page: () => const Scaffold(
-            body: Text('Enquetes'),
-          ),
+          page: makeSurveysPage,
           transition: Transition.fadeIn,
         ),
       ],

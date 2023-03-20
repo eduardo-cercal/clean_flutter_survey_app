@@ -40,4 +40,10 @@ class PtBr implements Translation {
 
   @override
   String get msgEmailInUse => 'Email em uso';
+
+  @override
+  String get surveys => 'Enquetes';
+
+  @override
+  String get reload => 'Recarregar';
 }
