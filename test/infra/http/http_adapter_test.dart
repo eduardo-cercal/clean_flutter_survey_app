@@ -232,4 +232,207 @@ void main() {
           ));
     });
   });
+
+  group('get', () {
+    When mockRequestCall() =>
+        when(() => client.get(any(), headers: any(named: 'headers')));
+
+    void mockRequest(int statusCode,
+        {String body = '{"any_key":"any_value"}'}) {
+      mockRequestCall()
+          .thenAnswer((_) async => http.Response(body, statusCode));
+    }
+
+    test('should call get with correct values', () async {
+      mockRequest(200);
+
+      await systemUnderTest.request(url: url, method: 'get');
+
+      verify(() => client.get(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return data if get returns 200', () async {
+      mockRequest(200);
+
+      final result = await systemUnderTest.request(url: url, method: 'get');
+
+      expect(result, {"any_key": "any_value"});
+
+      verify(() => client.get(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return null if get returns 200 with null data', () async {
+      mockRequest(200, body: '<!DOCTYPE html>');
+
+      final result = await systemUnderTest.request(url: url, method: 'get');
+
+      expect(result, {});
+
+      verify(() => client.get(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return null if get returns 204', () async {
+      mockRequest(204, body: '');
+
+      final result = await systemUnderTest.request(url: url, method: 'get');
+
+      expect(result, {});
+
+      verify(() => client.get(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return null if get returns 204 with data', () async {
+      mockRequest(204, body: '{}');
+
+      final result = await systemUnderTest.request(url: url, method: 'get');
+
+      expect(result, {});
+
+      verify(() => client.get(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return bad request error if get returns 400 with a null body',
+        () async {
+      mockRequest(400, body: '');
+
+      final future = systemUnderTest.request(url: url, method: 'get');
+
+      expect(future, throwsA(HttpError.badRequest));
+
+      verify(() => client.get(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return bad request error if get returns 400', () async {
+      mockRequest(400);
+
+      final future = systemUnderTest.request(url: url, method: 'get');
+
+      expect(future, throwsA(HttpError.badRequest));
+
+      verify(() => client.get(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return unauthorized error if get returns 401', () async {
+      mockRequest(401, body: '{}');
+
+      final future = systemUnderTest.request(url: url, method: 'get');
+
+      expect(future, throwsA(HttpError.unauthorized));
+
+      verify(() => client.get(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return forbiden error if get returns 403', () async {
+      mockRequest(403, body: '{}');
+
+      final future = systemUnderTest.request(url: url, method: 'get');
+
+      expect(future, throwsA(HttpError.forbiden));
+
+      verify(() => client.get(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return not found error if get returns 404', () async {
+      mockRequest(404, body: '{}');
+
+      final future = systemUnderTest.request(url: url, method: 'get');
+
+      expect(future, throwsA(HttpError.notFound));
+
+      verify(() => client.get(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return server error erro if get returns 500', () async {
+      mockRequest(500, body: '{}');
+
+      final future = systemUnderTest.request(url: url, method: 'get');
+
+      expect(future, throwsA(HttpError.serverError));
+
+      verify(() => client.get(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return server error if get throws', () async {
+      when(() => client.get(any(), headers: any(named: 'headers')))
+          .thenThrow(Exception());
+
+      final future = systemUnderTest.request(url: url, method: 'get');
+
+      expect(future, throwsA(HttpError.serverError));
+
+      verify(() => client.get(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+  });
 }

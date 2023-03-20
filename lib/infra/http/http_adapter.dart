@@ -23,12 +23,17 @@ class HttpAdapter implements HttpClient<Map<String, dynamic>?> {
     http.Response response = http.Response('', 500);
 
     try {
-      if (method == 'post') {
-        response = await client.post(
-          Uri.parse(url),
-          headers: headers,
-          body: body != null ? jsonEncode(body) : null,
-        );
+      switch (method) {
+        case 'post':
+          response = await client.post(
+            Uri.parse(url),
+            headers: headers,
+            body: body != null ? jsonEncode(body) : null,
+          );
+          break;
+        case 'get':
+          response = await client.get(Uri.parse(url), headers: headers);
+          break;
       }
     } catch (e) {
       throw HttpError.serverError;
