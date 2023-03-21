@@ -3,7 +3,7 @@ import '../../../domain/helpers/errors/domain_error.dart';
 import '../../../domain/usecases/load_surveys_use_case.dart';
 import '../../http/http.error.dart';
 import '../../http/http_client.dart';
-import '../../models/survey_model.dart';
+import '../../models/remote_survey_model.dart';
 
 class RemoteLoadSurveys implements LoadSurveys {
   final HttpClient httpClient;
@@ -17,7 +17,7 @@ class RemoteLoadSurveys implements LoadSurveys {
       final list = await httpClient.request(url: url, method: 'get');
       return list!
           .map<SurveyEntity>(
-              (element) => SurveyModel.fromJson(element).toEntity())
+              (element) => RemoteSurveyModel.fromJson(element).toEntity())
           .toList();
     } on HttpError catch (error) {
       throw error == HttpError.forbiden
