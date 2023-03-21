@@ -8,11 +8,10 @@ import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockHttpClient extends Mock
-    implements HttpClient<List<Map<String, dynamic>>?> {}
+class MockHttpClient extends Mock implements HttpClient {}
 
 void main() {
-  late HttpClient<List<Map<String, dynamic>>?> httpClient;
+  late HttpClient httpClient;
   late LoadSurveys systemUnderTest;
   late List<Map<String, dynamic>>? list;
   final url = faker.internet.httpUrl();

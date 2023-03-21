@@ -5,7 +5,7 @@ import 'package:clean_flutter_login_app/data/http/http.error.dart';
 import '../../data/http/http_client.dart';
 import 'package:http/http.dart' as http;
 
-class HttpAdapter implements HttpClient<Map<String, dynamic>?> {
+class HttpAdapter implements HttpClient {
   final http.Client client;
 
   HttpAdapter(this.client);

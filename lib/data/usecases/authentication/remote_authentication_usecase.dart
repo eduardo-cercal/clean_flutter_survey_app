@@ -9,7 +9,7 @@ import '../../http/http_client.dart';
 import '../../models/account_model.dart';
 
 class RemoteAuthentication implements AuthenticationUseCase {
-  final HttpClient<Map<String, dynamic>?> httpClient;
+  final HttpClient httpClient;
   final String url;
 
   RemoteAuthentication({

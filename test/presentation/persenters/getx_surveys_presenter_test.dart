@@ -7,7 +7,6 @@ import 'package:clean_flutter_login_app/ui/pages/surveys/survey_viewmodel.dart';
 import 'package:clean_flutter_login_app/ui/pages/surveys/surveys_presenter.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mocktail/mocktail.dart';
 

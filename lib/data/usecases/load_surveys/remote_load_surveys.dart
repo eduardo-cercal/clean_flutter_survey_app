@@ -6,7 +6,7 @@ import '../../http/http_client.dart';
 import '../../models/survey_model.dart';
 
 class RemoteLoadSurveys implements LoadSurveys {
-  final HttpClient<List<Map<String, dynamic>>?> httpClient;
+  final HttpClient httpClient;
   final String url;
 
   RemoteLoadSurveys({required this.httpClient, required this.url});
@@ -16,7 +16,8 @@ class RemoteLoadSurveys implements LoadSurveys {
     try {
       final list = await httpClient.request(url: url, method: 'get');
       return list!
-          .map((element) => SurveyModel.fromJson(element).toEntity())
+          .map<SurveyEntity>(
+              (element) => SurveyModel.fromJson(element).toEntity())
           .toList();
     } on HttpError catch (error) {
       throw error == HttpError.forbiden

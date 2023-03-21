@@ -108,7 +108,5 @@ class StreamLoginPresenter implements LoginPresenter {
   }
 
   @override
-  void goToSignUp() {
-    // TODO: implement goToSignUp
-  }
+  void goToSignUp() {}
 }
