@@ -25,7 +25,7 @@ void main() {
   void mockStreams() {
     when(() => presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
-    when(() => presenter.loadSurveysStream)
+    when(() => presenter.surveysStream)
         .thenAnswer((_) => loadSurveysController.stream);
   }
 
@@ -101,8 +101,7 @@ void main() {
     },
   );
 
-  testWidgets('should present error if loadSurveysStream fails',
-      (tester) async {
+  testWidgets('should present error if surveysStream fails', (tester) async {
     await loadPage(tester);
 
     loadSurveysController.addError(UiError.unexpected.description);
@@ -113,8 +112,7 @@ void main() {
     expect(find.text('Question 1'), findsNothing);
   });
 
-  testWidgets('should present list if loadSurveysStream succeeds',
-      (tester) async {
+  testWidgets('should present list if surveysStream succeeds', (tester) async {
     await loadPage(tester);
 
     loadSurveysController.add(makeSurveys());
