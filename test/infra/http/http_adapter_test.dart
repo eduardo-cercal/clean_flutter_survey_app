@@ -12,10 +12,18 @@ void main() {
   late HttpAdapter systemUnderTest;
   final String url = faker.internet.httpUrl();
 
+  When mockHttpAdapterCall() => when(() => client.post(any(),
+      headers: any(named: 'headers'), body: any(named: 'body')));
+
+  void mockHttpAdapter() =>
+      mockHttpAdapterCall().thenAnswer((_) async => http.Response('{}', 200));
+
   setUp(() {
     client = MockHttpClient();
     systemUnderTest = HttpAdapter(client);
     registerFallbackValue(Uri.parse(url));
+
+    mockHttpAdapter();
   });
 
   group('shared', () {
@@ -33,18 +41,39 @@ void main() {
 
   group('post', () {
     test('should call post with correct values', () async {
-      when(() => client.post(any(),
-              headers: any(named: 'headers'), body: any(named: 'body')))
-          .thenAnswer((_) async => http.Response('{}', 200));
-
-      await systemUnderTest.request(url: url, method: 'post', body: {});
-
-      verify(() => client.post(Uri.parse(url),
+      await systemUnderTest.request(
+        url: url,
+        method: 'post',
+        body: {},
+      );
+      verify(
+        () => client.post(
+          Uri.parse(url),
           headers: {
             'content-type': 'application/json',
             'accept': 'application/json',
           },
-          body: '{}'));
+          body: '{}',
+        ),
+      );
+
+      await systemUnderTest.request(
+        url: url,
+        method: 'post',
+        body: {},
+        headers: {'any_header': 'any_value'},
+      );
+      verify(
+        () => client.post(
+          Uri.parse(url),
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json',
+            'any_header': 'any_value',
+          },
+          body: '{}',
+        ),
+      );
     });
 
     test('should call post without the body', () async {
@@ -247,14 +276,28 @@ void main() {
       mockRequest(200);
 
       await systemUnderTest.request(url: url, method: 'get');
+      verify(
+        () => client.get(
+          Uri.parse(url),
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json',
+          },
+        ),
+      );
 
-      verify(() => client.get(
-            Uri.parse(url),
-            headers: {
-              'content-type': 'application/json',
-              'accept': 'application/json',
-            },
-          ));
+      await systemUnderTest.request(
+          url: url, method: 'get', headers: {'any_header': 'any_value'});
+      verify(
+        () => client.get(
+          Uri.parse(url),
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json',
+            'any_header': 'any_value',
+          },
+        ),
+      );
     });
 
     test('should return data if get returns 200', () async {

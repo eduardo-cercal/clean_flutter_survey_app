@@ -11,15 +11,17 @@ class HttpAdapter implements HttpClient {
   HttpAdapter(this.client);
 
   @override
-  Future<Map<String, dynamic>?> request({
+  Future<dynamic> request({
     required String url,
     required String method,
     Map<String, dynamic>? body,
+    Map<String, String>? headers,
   }) async {
-    final headers = {
-      'content-type': 'application/json',
-      'accept': 'application/json',
-    };
+    final defaultHeaders = headers ?? {}
+      ..addAll({
+        'content-type': 'application/json',
+        'accept': 'application/json',
+      });
     http.Response response = http.Response('', 500);
 
     try {
@@ -27,12 +29,12 @@ class HttpAdapter implements HttpClient {
         case 'post':
           response = await client.post(
             Uri.parse(url),
-            headers: headers,
+            headers: defaultHeaders,
             body: body != null ? jsonEncode(body) : null,
           );
           break;
         case 'get':
-          response = await client.get(Uri.parse(url), headers: headers);
+          response = await client.get(Uri.parse(url), headers: defaultHeaders);
           break;
       }
     } catch (e) {
@@ -42,7 +44,7 @@ class HttpAdapter implements HttpClient {
     return _handleResponse(response);
   }
 
-  Map<String, dynamic>? _handleResponse(http.Response response) {
+  dynamic _handleResponse(http.Response response) {
     switch (response.statusCode) {
       case 204:
         return {};
