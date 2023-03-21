@@ -8,4 +8,5 @@
 5. Hide error message and show the list when recieve a surveyData event with data
 6. Show date and question from a survey model
 7. Show a unanswered survey in red and gren when ansered
-8. Go to the result screen when click on a survey
+8. Call the list surveys method when click on the reload buttom
+9. Go to the result screen when click on a survey

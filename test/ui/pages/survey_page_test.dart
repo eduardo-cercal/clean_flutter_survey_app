@@ -69,13 +69,13 @@ void main() {
         SurveyViewModel(
           id: faker.guid.guid(),
           question: 'Question 1',
-          date: faker.date.dateTime().toString(),
+          date: 'Date 1',
           didAnswer: faker.randomGenerator.boolean(),
         ),
         SurveyViewModel(
           id: faker.guid.guid(),
           question: 'Question 2',
-          date: faker.date.dateTime().toString(),
+          date: 'Date 2',
           didAnswer: faker.randomGenerator.boolean(),
         ),
       ];
@@ -124,5 +124,17 @@ void main() {
     expect(find.text('Recarregar'), findsNothing);
     expect(find.text('Question 1'), findsWidgets);
     expect(find.text('Question 2'), findsWidgets);
+    expect(find.text('Date 1'), findsWidgets);
+    expect(find.text('Date 2'), findsWidgets);
+  });
+
+  testWidgets('should call LoadSuveys on realod buttom click', (tester) async {
+    await loadPage(tester);
+
+    loadSurveysController.addError(UiError.unexpected.description);
+    await tester.pump();
+    await tester.tap(find.text('Recarregar'));
+
+    verify(() => presenter.loadData()).called(2);
   });
 }
