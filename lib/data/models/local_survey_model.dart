@@ -13,15 +13,22 @@ class LocalSurveyModel extends SurveyEntity {
     if (!json.keys
         .toSet()
         .containsAll(['id', 'question', 'date', 'didAnswer'])) {
-      throw HttpError.invalidData;
+      throw Exception();
     }
     return LocalSurveyModel(
       id: json['id'],
       question: json['question'],
       dateTime: DateTime.parse(json['date']),
-      didAnswer: bool.fromEnvironment(json['didAnswer']),
+      didAnswer: json['didAnswer'] == "true" ? true : false,
     );
   }
+
+  factory LocalSurveyModel.fromEntity(SurveyEntity entity) => LocalSurveyModel(
+        id: entity.id,
+        question: entity.question,
+        dateTime: entity.dateTime,
+        didAnswer: entity.didAnswer,
+      );
 
   SurveyEntity toEntity() => SurveyEntity(
         id: id,
@@ -29,4 +36,11 @@ class LocalSurveyModel extends SurveyEntity {
         dateTime: dateTime,
         didAnswer: didAnswer,
       );
+
+  Map<String, String> toJson() => {
+        'id': id,
+        'question': question,
+        'date': dateTime.toIso8601String(),
+        'didAnswer': didAnswer.toString(),
+      };
 }
