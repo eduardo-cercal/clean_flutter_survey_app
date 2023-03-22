@@ -1,72 +1,97 @@
+import 'package:clean_flutter_login_app/data/cache/cache_storage.dart';
 import 'package:clean_flutter_login_app/infra/cache/local_storage_adapter.dart';
 import 'package:faker/faker.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
+class MockLocalStorage extends Mock implements LocalStorage {}
 
 void main() {
-  late FlutterSecureStorage storage;
-  late LocalStorageAdapter systemUnderTest;
-  final key = faker.lorem.word();
-  final value = faker.guid.guid();
+  late LocalStorage localStorage;
+  late CacheStorage systemUnderTest;
+  late String key;
+  late dynamic value;
+
+  When mockLocalStorageDeleteItemCall() =>
+      when(() => localStorage.deleteItem(any()));
+
+  When mockLocalStorageSetItemCall() =>
+      when(() => localStorage.setItem(any(), any()));
+
+  When mockLocalStorageGetItemCall() => when(() => localStorage.getItem(any()));
+
+  void mockLocalStorage() {
+    mockLocalStorageDeleteItemCall().thenAnswer((_) async {});
+    mockLocalStorageSetItemCall().thenAnswer((_) async {});
+    mockLocalStorageGetItemCall().thenAnswer((_) async => value);
+  }
+
+  void mockLocalStorageDeleteItemError() =>
+      mockLocalStorageDeleteItemCall().thenThrow(Exception());
+
+  void mockLocalStorageSetItemError() =>
+      mockLocalStorageSetItemCall().thenThrow(Exception());
 
   setUp(() {
-    storage = MockFlutterSecureStorage();
-    systemUnderTest = LocalStorageAdapter(storage);
+    localStorage = MockLocalStorage();
+    systemUnderTest = LocalStorageAdapter(localStorage);
+    key = faker.randomGenerator.string(5);
+    value = faker.randomGenerator.string(50);
+    mockLocalStorage();
   });
 
-  group('save secure test', () {
-    test('should call save secure with correct values', () async {
-      when(() =>
-              storage.write(key: any(named: 'key'), value: any(named: 'value')))
-          .thenAnswer((_) async {});
+  group('save', () {
+    test('should calls local storage with correct values', () async {
+      await systemUnderTest.save(key: key, value: value);
 
-      await systemUnderTest.saveSecure(key: key, value: value);
-
-      verify(() => storage.write(key: key, value: value)).called(1);
+      verify(() => localStorage.deleteItem(key)).called(1);
+      verify(() => localStorage.setItem(key, value)).called(1);
     });
 
-    test(
-        'should throw a error message when try to call the method without the current values',
-        () async {
-      when(() =>
-              storage.write(key: any(named: 'key'), value: any(named: 'value')))
-          .thenThrow(Exception());
+    test('should throw if deleteItem throws', () async {
+      mockLocalStorageDeleteItemError();
+      final future = systemUnderTest.save(key: key, value: value);
+      expect(future, throwsA(const TypeMatcher<Exception>()));
+    });
 
-      final future = systemUnderTest.saveSecure(key: key, value: value);
-
+    test('should throw if setItem throws', () async {
+      mockLocalStorageSetItemError();
+      final future = systemUnderTest.save(key: key, value: value);
       expect(future, throwsA(const TypeMatcher<Exception>()));
     });
   });
 
-  group('fetch secure test', () {
-    test('should call fetch secure with correct values', () async {
-      when(() => storage.read(key: any(named: 'key')))
-          .thenAnswer((_) async => value);
+  group('delete', () {
+    test('should call local storage with correct values', () async {
+      await systemUnderTest.delete(key);
 
-      await systemUnderTest.fetchSecure(key);
-
-      verify(() => storage.read(key: key)).called(1);
+      verify(() => localStorage.deleteItem(key)).called(1);
     });
 
-    test('should return correct value on success', () async {
-      when(() => storage.read(key: any(named: 'key')))
-          .thenAnswer((_) async => value);
+    test('should throw if deleteItem throws', () async {
+      mockLocalStorageDeleteItemError();
+      final future = systemUnderTest.save(key: key, value: value);
+      expect(future, throwsA(const TypeMatcher<Exception>()));
+    });
+  });
 
-      final result = await systemUnderTest.fetchSecure(key);
+  group('fetch', () {
+    test('should call local storage with correct values', () async {
+      await systemUnderTest.fetch(key);
+
+      verify(() => localStorage.getItem(key)).called(1);
+    });
+
+    test('should return same value as localStorage', () async {
+      final result = await systemUnderTest.fetch(key);
 
       expect(result, value);
     });
 
-    test(
-        'should throw a error message when try to call the method without the current values',
-        () async {
-      when(() => storage.read(key: any(named: 'key'))).thenThrow(Exception());
-
-      final future = systemUnderTest.fetchSecure(key);
-
+    test('should throw if deleteItem throws', () async {
+      mockLocalStorageDeleteItemError();
+      final future = systemUnderTest.save(key: key, value: value);
       expect(future, throwsA(const TypeMatcher<Exception>()));
     });
   });

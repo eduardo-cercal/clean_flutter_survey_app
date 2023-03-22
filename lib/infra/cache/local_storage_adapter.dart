@@ -1,22 +1,25 @@
-import 'package:clean_flutter_login_app/data/cache/fetch_secure_cache_storage.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:localstorage/localstorage.dart';
 
-import '../../data/cache/save_secure_cache_storage.dart';
+import '../../data/cache/cache_storage.dart';
 
-class LocalStorageAdapter
-    implements SaveSecureCacheStorage, FetchSecureCacheStorage {
-  final FlutterSecureStorage secureStorage;
+class LocalStorageAdapter implements CacheStorage {
+  final LocalStorage localStorage;
 
-  LocalStorageAdapter(this.secureStorage);
+  LocalStorageAdapter(this.localStorage);
 
   @override
-  Future<void> saveSecure({required String key, required String? value}) async {
-    await secureStorage.write(key: key, value: value);
+  Future<void> delete(String key) async {
+    await localStorage.deleteItem(key);
   }
 
   @override
-  Future<String> fetchSecure(String key) async {
-    final result = await secureStorage.read(key: key);
-    return result!;
+  Future fetch(String key) async {
+    return await localStorage.getItem(key);
+  }
+
+  @override
+  Future<void> save({required String key, required value}) async {
+    await localStorage.deleteItem(key);
+    await localStorage.setItem(key, value);
   }
 }
