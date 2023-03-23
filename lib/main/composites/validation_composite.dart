@@ -1,5 +1,5 @@
 import '../../presentation/dependecies/validation.dart';
-import '../dependencies/field_validation.dart';
+import '../../validation/dependencies/field_validation.dart';
 
 class ValidationComposite implements Validation {
   final List<FieldValidation> validations;

@@ -1,6 +1,6 @@
 import 'package:clean_flutter_login_app/presentation/dependecies/validation.dart';
 import 'package:clean_flutter_login_app/validation/dependencies/field_validation.dart';
-import 'package:clean_flutter_login_app/validation/validators/validation_composite.dart';
+import 'package:clean_flutter_login_app/main/composites/validation_composite.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
