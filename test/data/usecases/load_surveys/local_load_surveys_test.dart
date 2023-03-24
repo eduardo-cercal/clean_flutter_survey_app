@@ -1,5 +1,4 @@
 import 'package:clean_flutter_login_app/data/cache/cache_storage.dart';
-import 'package:clean_flutter_login_app/data/models/local_survey_model.dart';
 import 'package:clean_flutter_login_app/data/usecases/load_surveys/local_load_surveys.dart';
 import 'package:clean_flutter_login_app/domain/entities/survey_entity.dart';
 import 'package:clean_flutter_login_app/domain/helpers/errors/domain_error.dart';

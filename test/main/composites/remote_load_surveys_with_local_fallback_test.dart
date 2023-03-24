@@ -1,39 +1,127 @@
+import 'package:clean_flutter_login_app/data/usecases/load_surveys/local_load_surveys.dart';
 import 'package:clean_flutter_login_app/data/usecases/load_surveys/remote_load_surveys.dart';
 import 'package:clean_flutter_login_app/domain/entities/survey_entity.dart';
+import 'package:clean_flutter_login_app/domain/helpers/errors/domain_error.dart';
 import 'package:clean_flutter_login_app/domain/usecases/load_surveys_use_case.dart';
+import 'package:clean_flutter_login_app/main/composites/remote_load_surveys_with_local_fallback.dart';
+import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-class RemoteLoadSurveysWithLocalFallback implements LoadSurveys {
-  final RemoteLoadSurveys remoteLoadSurveys;
-
-  RemoteLoadSurveysWithLocalFallback(this.remoteLoadSurveys);
-  @override
-  Future<List<SurveyEntity>> load() async {
-    return await remoteLoadSurveys.load();
-  }
-}
-
 class MockRemoteLoadSurveys extends Mock implements RemoteLoadSurveys {}
+
+class MockLocalLoadSurveys extends Mock implements LocalLoadSurveys {}
 
 void main() {
   late RemoteLoadSurveys remoteLoadSurveys;
+  late LocalLoadSurveys localLoadSurveys;
   late LoadSurveys systemUnderTest;
+  late List<SurveyEntity> surveys;
+
+  List<SurveyEntity> mockSurveys() => [
+        SurveyEntity(
+          id: faker.guid.guid(),
+          question: faker.randomGenerator.string(10),
+          dateTime: faker.date.dateTime(),
+          didAnswer: faker.randomGenerator.boolean(),
+        ),
+      ];
 
   When mockRemoteLoadSurveysCall() => when(() => remoteLoadSurveys.load());
 
-  void mockRemoteLoadSurveys() =>
-      mockRemoteLoadSurveysCall().thenAnswer((_) async => <SurveyEntity>[]);
+  When mockLocalLoadSurveysSaveCall() =>
+      when(() => localLoadSurveys.save(any()));
+
+  When mockLocalLoadSurveysValidateCall() =>
+      when(() => localLoadSurveys.validate());
+
+  When mockLocalLoadSurveysLoadCall() => when(() => localLoadSurveys.load());
+
+  void mockRemoteLoadSurveys() {
+    surveys = mockSurveys();
+    mockRemoteLoadSurveysCall().thenAnswer((_) async => surveys);
+  }
+
+  void mockLocalLoadSurveysSave() =>
+      mockLocalLoadSurveysSaveCall().thenAnswer((_) async {});
+
+  void mockLocalLoadSurveysLoad() {
+    surveys = mockSurveys();
+    mockLocalLoadSurveysLoadCall().thenAnswer((_) async => surveys);
+  }
+
+  void mockLocalLoadSurveysValidate() =>
+      mockLocalLoadSurveysValidateCall().thenAnswer((_) async {});
+
+  void mockRemoteLoadSurveysError(DomainError error) =>
+      mockRemoteLoadSurveysCall().thenThrow(error);
+
+  void mockLocalLoadSurveysLoadError() =>
+      mockLocalLoadSurveysLoadCall().thenThrow(DomainError.unexpected);
 
   setUp(() {
     remoteLoadSurveys = MockRemoteLoadSurveys();
-    systemUnderTest = RemoteLoadSurveysWithLocalFallback(remoteLoadSurveys);
+    localLoadSurveys = MockLocalLoadSurveys();
+    systemUnderTest = RemoteLoadSurveysWithLocalFallback(
+      remoteLoadSurveys: remoteLoadSurveys,
+      localLoadSurveys: localLoadSurveys,
+    );
     mockRemoteLoadSurveys();
+    mockLocalLoadSurveysSave();
+    mockLocalLoadSurveysValidate();
+    mockLocalLoadSurveysLoad();
   });
 
   test('should remote load', () async {
     await systemUnderTest.load();
 
     verify(() => remoteLoadSurveys.load()).called(1);
+  });
+
+  test('should call loacal save with remote data', () async {
+    await systemUnderTest.load();
+
+    verify(() => localLoadSurveys.save(surveys)).called(1);
+  });
+
+  test('should return remote data', () async {
+    final result = await systemUnderTest.load();
+
+    expect(result, surveys);
+  });
+
+  test('should rethrow if remote load throws AccessDeniedError', () async {
+    mockRemoteLoadSurveysError(DomainError.accessDenied);
+
+    final future = systemUnderTest.load();
+
+    expect(future, throwsA(DomainError.accessDenied));
+  });
+
+  test('should call local fetch on remote error', () async {
+    mockRemoteLoadSurveysError(DomainError.unexpected);
+
+    await systemUnderTest.load();
+
+    verify(() => localLoadSurveys.validate()).called(1);
+    verify(() => localLoadSurveys.load()).called(1);
+  });
+
+  test('should return local data', () async {
+    mockRemoteLoadSurveysError(DomainError.unexpected);
+
+    final result = await systemUnderTest.load();
+
+    expect(result, surveys);
+  });
+
+  test('should throw UnexpectedError if remote and local load throws',
+      () async {
+    mockRemoteLoadSurveysError(DomainError.unexpected);
+    mockLocalLoadSurveysLoadError();
+
+    final future = systemUnderTest.load();
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
