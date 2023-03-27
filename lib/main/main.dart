@@ -6,6 +6,7 @@ import '../ui/components/app_theme.dart';
 import 'factories/pages/login/login_page_factory.dart';
 import 'factories/pages/sign_up/sign_up_page_factory.dart';
 import 'factories/pages/splash/splash_page_factory.dart';
+import 'factories/pages/survey_result/survey_result_page_factory.dart';
 import 'factories/pages/surveys/surveys_page_factory.dart';
 
 void main() {
@@ -43,6 +44,10 @@ class App extends StatelessWidget {
           name: '/surveys',
           page: makeSurveysPage,
           transition: Transition.fadeIn,
+        ),
+        GetPage(
+          name: '/survey_result/:survey_id',
+          page: makeSurveyResultPage,
         ),
       ],
     );

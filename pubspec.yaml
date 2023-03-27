@@ -23,6 +23,7 @@ dependencies:
   carousel_slider: ^4.2.1
   intl: ^0.18.0
   localstorage: ^4.0.1+2
+  network_image_mock: ^2.1.1
 
 dev_dependencies:
   flutter_test:

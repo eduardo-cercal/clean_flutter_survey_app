@@ -5,7 +5,9 @@ import 'package:clean_flutter_login_app/ui/pages/surveys/surveys_presenter.dart'
 import 'package:flutter/material.dart';
 
 import '../../components/loading_dialog.dart';
+import '../../components/reload_screen.dart';
 import 'components/survey_item.dart';
+import 'components/survey_itens.dart';
 
 class SurveysPage extends StatelessWidget {
   final SurveysPresenter? presenter;
@@ -36,43 +38,14 @@ class SurveysPage extends StatelessWidget {
               stream: presenter?.surveysStream,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return Padding(
-                    padding: const EdgeInsets.all(40.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          snapshot.error.toString(),
-                          style: const TextStyle(
-                            fontSize: 16,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        ElevatedButton(
-                          onPressed: presenter?.loadData,
-                          child: Text(R.strings.reload),
-                        )
-                      ],
-                    ),
+                  return ReloadScreen(
+                    error: snapshot.error.toString(),
+                    reload: presenter!.loadData,
                   );
                 }
                 if (snapshot.hasData) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 20,
-                    ),
-                    child: CarouselSlider(
-                      items: snapshot.data!
-                          .map((viewModel) => SurveyItem(viewModel: viewModel))
-                          .toList(),
-                      options: CarouselOptions(
-                        enlargeCenterPage: true,
-                        aspectRatio: 1,
-                      ),
-                    ),
+                  return SurveyItens(
+                    viewModel: snapshot.data!,
                   );
                 }
                 return Container();
