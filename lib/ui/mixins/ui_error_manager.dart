@@ -1,7 +1,6 @@
 import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
 import 'package:flutter/material.dart';
 
-import '../components/loading_dialog.dart';
 import '../components/snack_bar_error.dart';
 
 mixin UiErrorManager {

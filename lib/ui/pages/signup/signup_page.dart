@@ -1,12 +1,9 @@
-import 'package:clean_flutter_login_app/ui/components/loading_dialog.dart';
-import 'package:clean_flutter_login_app/ui/components/snack_bar_error.dart';
-import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
 import 'package:clean_flutter_login_app/ui/mixins/keyboard_manager.dart';
 import 'package:clean_flutter_login_app/ui/mixins/loading_manager.dart';
+import 'package:clean_flutter_login_app/ui/mixins/navigation_manager.dart';
 import 'package:clean_flutter_login_app/ui/mixins/ui_error_manager.dart';
 import 'package:clean_flutter_login_app/ui/pages/signup/signup_presenter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../helpers/i18n/resources.dart';
 import '../../components/headline_1.dart';
@@ -23,7 +20,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage>
-    with KeyboardManager, LoadingManager, UiErrorManager {
+    with KeyboardManager, LoadingManager, UiErrorManager, NavigationManager {
   @override
   void dispose() {
     widget.presenter?.dispose();
@@ -45,11 +42,12 @@ class _SignUpPageState extends State<SignUpPage>
             stream: widget.presenter?.mainErrorStream,
           );
 
-          widget.presenter?.navigateToStream?.listen((page) {
-            if (page != null && page.isNotEmpty) {
-              Get.offAllNamed(page);
-            }
-          });
+          handleNavigation(
+            context: context,
+            stream: widget.presenter?.navigateToStream,
+            clear: true,
+          );
+
           return GestureDetector(
             onTap: () => hideKeyboard(context),
             child: SingleChildScrollView(

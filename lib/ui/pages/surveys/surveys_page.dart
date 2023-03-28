@@ -1,15 +1,15 @@
 import 'package:clean_flutter_login_app/ui/helpers/i18n/resources.dart';
 import 'package:clean_flutter_login_app/ui/mixins/loading_manager.dart';
+import 'package:clean_flutter_login_app/ui/mixins/session_manager.dart';
 import 'package:clean_flutter_login_app/ui/pages/surveys/survey_viewmodel.dart';
 import 'package:clean_flutter_login_app/ui/pages/surveys/surveys_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../components/loading_dialog.dart';
 import '../../components/reload_screen.dart';
 import 'components/survey_itens.dart';
 
-class SurveysPage extends StatelessWidget with LoadingManager {
+class SurveysPage extends StatelessWidget with LoadingManager, SessionManager {
   final SurveysPresenter? presenter;
 
   const SurveysPage({super.key, required this.presenter});
@@ -26,13 +26,11 @@ class SurveysPage extends StatelessWidget with LoadingManager {
             context: context,
             stream: presenter!.isLoadingStream,
           );
-          presenter!.isSessionExpiredStream.listen(
-            (isExpired) {
-              if (isExpired != null && isExpired) {
-                Get.offAllNamed('/login');
-              }
-            },
+          handleSession(
+            context: context,
+            stream: presenter!.isSessionExpiredStream,
           );
+
           presenter!.navigateToStream.listen((page) {
             if (page != null && page.isNotEmpty) {
               Get.toNamed(page);

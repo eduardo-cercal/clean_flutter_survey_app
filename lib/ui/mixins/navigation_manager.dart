@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../components/loading_dialog.dart';
 
 mixin NavigationManager {
   void handleNavigation({
