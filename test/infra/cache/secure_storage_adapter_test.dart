@@ -23,7 +23,7 @@ void main() {
               storage.write(key: any(named: 'key'), value: any(named: 'value')))
           .thenAnswer((_) async {});
 
-      await systemUnderTest.saveSecure(key: key, value: value);
+      await systemUnderTest.save(key: key, value: value);
 
       verify(() => storage.write(key: key, value: value)).called(1);
     });
@@ -35,7 +35,7 @@ void main() {
               storage.write(key: any(named: 'key'), value: any(named: 'value')))
           .thenThrow(Exception());
 
-      final future = systemUnderTest.saveSecure(key: key, value: value);
+      final future = systemUnderTest.save(key: key, value: value);
 
       expect(future, throwsA(const TypeMatcher<Exception>()));
     });
@@ -46,7 +46,7 @@ void main() {
       when(() => storage.read(key: any(named: 'key')))
           .thenAnswer((_) async => value);
 
-      await systemUnderTest.fetchSecure(key);
+      await systemUnderTest.fetch(key);
 
       verify(() => storage.read(key: key)).called(1);
     });
@@ -55,7 +55,7 @@ void main() {
       when(() => storage.read(key: any(named: 'key')))
           .thenAnswer((_) async => value);
 
-      final result = await systemUnderTest.fetchSecure(key);
+      final result = await systemUnderTest.fetch(key);
 
       expect(result, value);
     });
@@ -65,8 +65,25 @@ void main() {
         () async {
       when(() => storage.read(key: any(named: 'key'))).thenThrow(Exception());
 
-      final future = systemUnderTest.fetchSecure(key);
+      final future = systemUnderTest.fetch(key);
 
+      expect(future, throwsA(const TypeMatcher<Exception>()));
+    });
+  });
+
+  group('delete', () {
+    test('should call delete with correct values', () async {
+      when(() => storage.delete(key: any(named: 'key')))
+          .thenAnswer((_) async {});
+
+      await systemUnderTest.delete(key);
+
+      verify(() => storage.delete(key: key)).called(1);
+    });
+
+    test('should throw if deleteItem throws', () async {
+      when(() => storage.delete(key: any(named: 'key'))).thenThrow(Exception());
+      final future = systemUnderTest.delete(key);
       expect(future, throwsA(const TypeMatcher<Exception>()));
     });
   });

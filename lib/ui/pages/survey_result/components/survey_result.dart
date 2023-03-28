@@ -1,11 +1,8 @@
 import 'package:clean_flutter_login_app/ui/pages/survey_result/components/survey_answer.dart';
 import 'package:clean_flutter_login_app/ui/pages/survey_result/components/survey_header.dart';
-import 'package:clean_flutter_login_app/ui/pages/survey_result/survey_answer_viewmodel.dart';
 import 'package:clean_flutter_login_app/ui/pages/survey_result/survey_result_viewmodel.dart';
 import 'package:flutter/material.dart';
 
-import 'active_icon.dart';
-import 'disable_icon.dart';
 
 class SurveyResult extends StatelessWidget {
   final SurveyResultViewModel viewModel;

@@ -5,9 +5,9 @@ abstract class LoginPresenter {
 
   Stream<UiError?>? get passwordErrorStream;
 
-  Stream<bool>? get formValidStream;
+  Stream<bool>? get isFormValidStream;
 
-  Stream<bool>? get loadingStream;
+  Stream<bool>? get isLoadingStream;
 
   Stream<UiError?>? get mainErrorStream;
 

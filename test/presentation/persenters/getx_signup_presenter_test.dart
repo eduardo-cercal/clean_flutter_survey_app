@@ -105,7 +105,7 @@ void main() {
 
     systemUnderTest.nameErrorStream
         ?.listen(expectAsync1((error) => expect(error, UiError.invalidField)));
-    systemUnderTest.formValidStream
+    systemUnderTest.isFormValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
     systemUnderTest.validateName(name);
@@ -118,7 +118,7 @@ void main() {
 
     systemUnderTest.nameErrorStream
         ?.listen(expectAsync1((error) => expect(error, UiError.requiredField)));
-    systemUnderTest.formValidStream
+    systemUnderTest.isFormValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
     systemUnderTest.validateName(name);
@@ -128,7 +128,7 @@ void main() {
   test('should emit a null if name validation success', () async {
     systemUnderTest.nameErrorStream
         ?.listen(expectAsync1((error) => expect(error, null)));
-    systemUnderTest.formValidStream
+    systemUnderTest.isFormValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
     systemUnderTest.validateName(name);
@@ -148,7 +148,7 @@ void main() {
 
     systemUnderTest.emailErrorStream
         ?.listen(expectAsync1((error) => expect(error, UiError.invalidField)));
-    systemUnderTest.formValidStream
+    systemUnderTest.isFormValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
     systemUnderTest.validateEmail(email);
@@ -161,7 +161,7 @@ void main() {
 
     systemUnderTest.emailErrorStream
         ?.listen(expectAsync1((error) => expect(error, UiError.requiredField)));
-    systemUnderTest.formValidStream
+    systemUnderTest.isFormValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
     systemUnderTest.validateEmail(email);
@@ -171,7 +171,7 @@ void main() {
   test('should emit a null if email validation success', () async {
     systemUnderTest.emailErrorStream
         ?.listen(expectAsync1((error) => expect(error, null)));
-    systemUnderTest.formValidStream
+    systemUnderTest.isFormValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
     systemUnderTest.validateEmail(email);
@@ -191,7 +191,7 @@ void main() {
 
     systemUnderTest.passwordErrorStream
         ?.listen(expectAsync1((error) => expect(error, UiError.invalidField)));
-    systemUnderTest.formValidStream
+    systemUnderTest.isFormValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
     systemUnderTest.validatePassword(password);
@@ -203,7 +203,7 @@ void main() {
 
     systemUnderTest.passwordErrorStream
         ?.listen(expectAsync1((error) => expect(error, UiError.requiredField)));
-    systemUnderTest.formValidStream
+    systemUnderTest.isFormValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
     systemUnderTest.validatePassword(password);
@@ -213,7 +213,7 @@ void main() {
   test('should emit a null if password validation succed', () async {
     systemUnderTest.passwordErrorStream
         ?.listen(expectAsync1((error) => expect(error, null)));
-    systemUnderTest.formValidStream
+    systemUnderTest.isFormValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
     systemUnderTest.validatePassword(password);
@@ -235,7 +235,7 @@ void main() {
 
     systemUnderTest.passwordConfirmationErrorStream
         ?.listen(expectAsync1((error) => expect(error, UiError.invalidField)));
-    systemUnderTest.formValidStream
+    systemUnderTest.isFormValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
     systemUnderTest.validatePasswordConfirmation(passwordConfirmation);
@@ -248,7 +248,7 @@ void main() {
 
     systemUnderTest.passwordConfirmationErrorStream
         ?.listen(expectAsync1((error) => expect(error, UiError.requiredField)));
-    systemUnderTest.formValidStream
+    systemUnderTest.isFormValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
     systemUnderTest.validatePasswordConfirmation(passwordConfirmation);
@@ -259,7 +259,7 @@ void main() {
       () async {
     systemUnderTest.passwordConfirmationErrorStream
         ?.listen(expectAsync1((error) => expect(error, null)));
-    systemUnderTest.formValidStream
+    systemUnderTest.isFormValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
     systemUnderTest.validatePasswordConfirmation(password);
@@ -269,7 +269,7 @@ void main() {
   test('should disable form buttom if any field is invalid', () async {
     mockValidation(field: 'email', value: ValidationError.invalidField);
 
-    systemUnderTest.formValidStream
+    systemUnderTest.isFormValidStream
         ?.listen(expectAsync1((isValid) => expect(isValid, false)));
 
     systemUnderTest.validateEmail(email);
@@ -277,7 +277,7 @@ void main() {
   });
 
   test('should enable form buttom if all fields are valid', () async {
-    expectLater(systemUnderTest.formValidStream, emitsInOrder([false, true]));
+    expectLater(systemUnderTest.isFormValidStream, emitsInOrder([false, true]));
 
     systemUnderTest.validateName(name);
     await Future.delayed(Duration.zero);
@@ -325,7 +325,7 @@ void main() {
 
     expectLater(systemUnderTest.mainErrorStream,
         emitsInOrder([null, UiError.unexpected]));
-    expectLater(systemUnderTest.loadingStream, emitsInOrder([true, false]));
+    expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
 
     await systemUnderTest.signUp();
   });
@@ -336,7 +336,7 @@ void main() {
     systemUnderTest.validatePassword(password);
     systemUnderTest.validatePasswordConfirmation(passwordConfirmation);
 
-    expectLater(systemUnderTest.loadingStream, emits(true));
+    expectLater(systemUnderTest.isLoadingStream, emits(true));
 
     await systemUnderTest.signUp();
   });
@@ -361,7 +361,7 @@ void main() {
     systemUnderTest.validatePassword(password);
     systemUnderTest.validatePasswordConfirmation(passwordConfirmation);
 
-    expectLater(systemUnderTest.loadingStream, emitsInOrder([true, false]));
+    expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
     expectLater(systemUnderTest.mainErrorStream,
         emitsInOrder([null, UiError.emailInUse]));
 
@@ -376,7 +376,7 @@ void main() {
     systemUnderTest.validatePassword(password);
     systemUnderTest.validatePasswordConfirmation(passwordConfirmation);
 
-    expectLater(systemUnderTest.loadingStream, emitsInOrder([true, false]));
+    expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
     expectLater(systemUnderTest.mainErrorStream,
         emitsInOrder([null, UiError.unexpected]));
 

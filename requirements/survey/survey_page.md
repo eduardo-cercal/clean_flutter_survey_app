@@ -10,3 +10,4 @@
 7. Show a unanswered survey in red and gren when ansered
 8. Call the list surveys method when click on the reload buttom
 9. Go to the result screen when click on a survey
+10. Go to LoginPage and clear navigation when recieve a sessionExpired event as true

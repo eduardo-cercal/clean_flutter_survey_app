@@ -21,16 +21,16 @@ void main() {
   });
 
   test('should call FetchSecureCacheStorage with correct value', () async {
-    when(() => fetchSecureCacheStorage.fetchSecure(any()))
+    when(() => fetchSecureCacheStorage.fetch(any()))
         .thenAnswer((_) async => token);
 
     await systemUnderTest.load();
 
-    verify(() => fetchSecureCacheStorage.fetchSecure('token')).called(1);
+    verify(() => fetchSecureCacheStorage.fetch('token')).called(1);
   });
 
   test('should return a account entity', () async {
-    when(() => fetchSecureCacheStorage.fetchSecure(any()))
+    when(() => fetchSecureCacheStorage.fetch(any()))
         .thenAnswer((_) async => token);
 
     final result = await systemUnderTest.load();
@@ -39,8 +39,7 @@ void main() {
   });
 
   test('should throw a error when try to fetch without success', () async {
-    when(() => fetchSecureCacheStorage.fetchSecure(any()))
-        .thenThrow(Exception());
+    when(() => fetchSecureCacheStorage.fetch(any())).thenThrow(Exception());
 
     final future = systemUnderTest.load();
 

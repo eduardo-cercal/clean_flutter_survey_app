@@ -1,3 +1,4 @@
+import 'package:clean_flutter_login_app/data/cache/delete_secure_cache_storage.dart';
 import 'package:clean_flutter_login_app/data/cache/fetch_secure_cache_storage.dart';
 import 'package:clean_flutter_login_app/data/http/http.error.dart';
 import 'package:clean_flutter_login_app/data/http/http_client.dart';
@@ -9,10 +10,14 @@ import 'package:mocktail/mocktail.dart';
 class MockFetchSecureCacheStorage extends Mock
     implements FetchSecureCacheStorage {}
 
+class MockDeleteSecureCacheStorage extends Mock
+    implements DeleteSecureCacheStorage {}
+
 class MockHttpClient extends Mock implements HttpClient {}
 
 void main() {
   late FetchSecureCacheStorage fetchSecureCacheStorage;
+  late DeleteSecureCacheStorage deleteSecureCacheStorage;
   late HttpClient httpClient;
   late HttpClient systemUnderTest;
   final url = faker.internet.httpUrl();
@@ -22,13 +27,22 @@ void main() {
   final httpResponse = faker.randomGenerator.string(10);
 
   When mockFetchSecureCacheStorageCall() =>
-      when(() => fetchSecureCacheStorage.fetchSecure(any()));
+      when(() => fetchSecureCacheStorage.fetch(any()));
 
   void mockFetchSecureCacheStorage() =>
       mockFetchSecureCacheStorageCall().thenAnswer((_) async => token);
 
   void mockFetchSecureCacheStorageError() =>
       mockFetchSecureCacheStorageCall().thenThrow(Exception());
+
+  When mockDeleteSecureCacheStorageCall() =>
+      when(() => deleteSecureCacheStorage.delete(any()));
+
+  void mockDeleteSecureCacheStorage() =>
+      mockDeleteSecureCacheStorageCall().thenAnswer((_) async => token);
+
+  void mockDeleteSecureCacheStorageError() =>
+      mockDeleteSecureCacheStorageCall().thenThrow(Exception());
 
   When mockDecorateeCall() => when(() => httpClient.request(
         url: any(named: 'url'),
@@ -45,12 +59,15 @@ void main() {
 
   setUp(() {
     fetchSecureCacheStorage = MockFetchSecureCacheStorage();
+    deleteSecureCacheStorage = MockDeleteSecureCacheStorage();
     httpClient = MockHttpClient();
     systemUnderTest = AuthorizeHttpClientDecorator(
       fetchSecureCacheStorage: fetchSecureCacheStorage,
+      deleteSecureCacheStorage: deleteSecureCacheStorage,
       decoratee: httpClient,
     );
     mockFetchSecureCacheStorage();
+    mockDeleteSecureCacheStorage();
     mockDecoratee();
   });
 
@@ -61,7 +78,7 @@ void main() {
       body: body,
     );
 
-    verify(() => fetchSecureCacheStorage.fetchSecure('token')).called(1);
+    verify(() => fetchSecureCacheStorage.fetch('token')).called(1);
   });
 
   test('should call decoratee with access token on header', () async {
@@ -115,6 +132,7 @@ void main() {
     );
 
     expect(future, throwsA(HttpError.forbiden));
+    verify(() => deleteSecureCacheStorage.delete('token')).called(1);
   });
 
   test('should rethrow if decoratee throws', () async {
@@ -127,5 +145,19 @@ void main() {
     );
 
     expect(future, throwsA(HttpError.badRequest));
+  });
+
+  test('should delete cache if request throws Forbidden error', () async {
+    mockDecorateeError(HttpError.forbiden);
+
+    final future = systemUnderTest.request(
+      url: url,
+      method: method,
+      body: body,
+    );
+    await untilCalled(() => deleteSecureCacheStorage.delete('token'));
+
+    expect(future, throwsA(HttpError.forbiden));
+    verify(() => deleteSecureCacheStorage.delete('token')).called(1);
   });
 }

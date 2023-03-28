@@ -30,11 +30,11 @@ class StreamLoginPresenter implements LoginPresenter {
       controller?.stream.map((state) => state.passwordError).distinct();
 
   @override
-  Stream<bool>? get formValidStream =>
+  Stream<bool>? get isFormValidStream =>
       controller?.stream.map((state) => state.isFormValid).distinct();
 
   @override
-  Stream<bool>? get loadingStream =>
+  Stream<bool>? get isLoadingStream =>
       controller?.stream.map((state) => state.isLoading).distinct();
 
   @override

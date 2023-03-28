@@ -34,9 +34,9 @@ void main() {
         .thenAnswer((_) => emailErrorController.stream);
     when(() => presenter.passwordErrorStream)
         .thenAnswer((_) => passwordErrorController.stream);
-    when(() => presenter.formValidStream)
+    when(() => presenter.isFormValidStream)
         .thenAnswer((_) => isFormValidController.stream);
-    when(() => presenter.loadingStream)
+    when(() => presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
     when(() => presenter.mainErrorStream)
         .thenAnswer((_) => mainErrorController.stream);

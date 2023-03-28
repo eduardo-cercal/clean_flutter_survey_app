@@ -42,9 +42,9 @@ void main() {
         .thenAnswer((_) => passwordErrorController.stream);
     when(() => presenter.passwordConfirmationErrorStream)
         .thenAnswer((_) => passwordConfirmationErrorController.stream);
-    when(() => presenter.formValidStream)
+    when(() => presenter.isFormValidStream)
         .thenAnswer((_) => isFormValidController.stream);
-    when(() => presenter.loadingStream)
+    when(() => presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
     when(() => presenter.mainErrorStream)
         .thenAnswer((_) => mainErrorController.stream);

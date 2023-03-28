@@ -39,8 +39,8 @@ void main() {
     mockLoadSurveysCall().thenAnswer((_) async => data);
   }
 
-  void mockLoadSurveysError() {
-    mockLoadSurveysCall().thenThrow(DomainError.unexpected);
+  void mockLoadSurveysError(DomainError error) {
+    mockLoadSurveysCall().thenThrow(error);
   }
 
   setUp(() {
@@ -83,7 +83,7 @@ void main() {
   });
 
   test('should emit correct events on failure', () async {
-    mockLoadSurveysError();
+    mockLoadSurveysError(DomainError.unexpected);
 
     expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
     systemUnderTest.surveysStream.listen(
@@ -92,6 +92,22 @@ void main() {
         (error) => expect(error, UiError.unexpected.description),
       ),
     );
+
+    await systemUnderTest.loadData();
+  });
+
+  test('should go to survey result page on survey click', () async {
+    systemUnderTest.navigateToStream
+        .listen(expectAsync1((page) => expect(page, '/survey_result/1')));
+
+    systemUnderTest.goToSurveyResult('1');
+  });
+
+  test('should emit correct events on access denied', () async {
+    mockLoadSurveysError(DomainError.accessDenied);
+
+    expectLater(systemUnderTest.isLoadingStream, emitsInOrder([true, false]));
+    expectLater(systemUnderTest.isSessionExpiredStream, emits(true));
 
     await systemUnderTest.loadData();
   });

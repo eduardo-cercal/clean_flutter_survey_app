@@ -23,20 +23,20 @@ void main() {
   });
 
   test('should call SaveSecureCacheStorage with correct values', () async {
-    when(() => saveSecureCacheStorage.saveSecure(
+    when(() => saveSecureCacheStorage.save(
           key: any(named: 'key'),
           value: any(named: 'value'),
         )).thenAnswer((_) async {});
 
     await systemUnderTest.save(mockAccount);
 
-    verify(() => saveSecureCacheStorage.saveSecure(
-        key: 'token', value: mockAccount.token));
+    verify(() =>
+        saveSecureCacheStorage.save(key: 'token', value: mockAccount.token));
   });
 
   test('should throw a unexpected error if SaveSecureCacheStorage throws',
       () async {
-    when(() => saveSecureCacheStorage.saveSecure(
+    when(() => saveSecureCacheStorage.save(
           key: any(named: 'key'),
           value: any(named: 'value'),
         )).thenThrow(Exception());
@@ -45,7 +45,7 @@ void main() {
 
     expect(future, throwsA(DomainError.unexpected));
 
-    verify(() => saveSecureCacheStorage.saveSecure(
-        key: 'token', value: mockAccount.token));
+    verify(() =>
+        saveSecureCacheStorage.save(key: 'token', value: mockAccount.token));
   });
 }

@@ -1,8 +1,5 @@
 import 'package:clean_flutter_login_app/domain/entities/survey_answer_entity.dart';
-import 'package:clean_flutter_login_app/domain/entities/survey_entity.dart';
-import 'package:clean_flutter_login_app/domain/entities/survey_result_entity.dart';
 import 'package:equatable/equatable.dart';
-import 'package:intl/intl.dart';
 
 class SurveyAnswerViewModel extends Equatable {
   final String? image;
@@ -16,6 +13,14 @@ class SurveyAnswerViewModel extends Equatable {
     required this.isCurrentAnswer,
     required this.percent,
   });
+
+  factory SurveyAnswerViewModel.fromEntity(SurveyAnswerEntity entity) =>
+      SurveyAnswerViewModel(
+        image: entity.image,
+        answer: entity.answer,
+        isCurrentAnswer: entity.isCurrentAnswer,
+        percent: '${entity.percent}%',
+      );
 
   @override
   List<Object?> get props => [

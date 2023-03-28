@@ -1,25 +1,24 @@
+import 'package:clean_flutter_login_app/presentation/minixs/navigation_manager.dart';
 import 'package:get/get.dart';
 
 import '../../../domain/usecases/load_current_account.dart';
 import '../../../ui/pages/splash/splash_presenter.dart';
 
-class GetxSplashPresenter extends GetxController implements SplashPresenter {
+class GetxSplashPresenter extends GetxController
+    with NavigationManager
+    implements SplashPresenter {
   final LoadCurrentAccount loadCurrentAccount;
-  final _navigateTo = RxnString();
 
   GetxSplashPresenter(this.loadCurrentAccount);
-
-  @override
-  Stream<String?> get navigateToStream => _navigateTo.stream;
 
   @override
   Future<void> checkAccount({int durationInSeconds = 2}) async {
     await Future.delayed(Duration(seconds: durationInSeconds));
     try {
       final result = await loadCurrentAccount.load();
-      _navigateTo.value = result?.token != null ? '/survey' : '/login';
+      navigateTo = result?.token != null ? '/survey' : '/login';
     } catch (error) {
-      _navigateTo.value = '/login';
+      navigateTo = '/login';
     }
   }
 }

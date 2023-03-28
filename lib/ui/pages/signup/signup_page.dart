@@ -1,6 +1,9 @@
 import 'package:clean_flutter_login_app/ui/components/loading_dialog.dart';
 import 'package:clean_flutter_login_app/ui/components/snack_bar_error.dart';
 import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
+import 'package:clean_flutter_login_app/ui/mixins/keyboard_manager.dart';
+import 'package:clean_flutter_login_app/ui/mixins/loading_manager.dart';
+import 'package:clean_flutter_login_app/ui/mixins/ui_error_manager.dart';
 import 'package:clean_flutter_login_app/ui/pages/signup/signup_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,7 +22,8 @@ class SignUpPage extends StatefulWidget {
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _SignUpPageState extends State<SignUpPage>
+    with KeyboardManager, LoadingManager, UiErrorManager {
   @override
   void dispose() {
     widget.presenter?.dispose();
@@ -31,21 +35,15 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       body: Builder(
         builder: (context) {
-          widget.presenter?.loadingStream?.listen((isLoading) {
-            if (isLoading) {
-              loadingDialog(context);
-            } else {
-              if (Navigator.canPop(context)) {
-                Navigator.of(context).pop();
-              }
-            }
-          });
+          handleLoading(
+            context: context,
+            stream: widget.presenter?.isLoadingStream,
+          );
 
-          widget.presenter?.mainErrorStream?.listen((error) {
-            if (error != null) {
-              snackBarError(context: context, error: error.description);
-            }
-          });
+          handleMainError(
+            context: context,
+            stream: widget.presenter?.mainErrorStream,
+          );
 
           widget.presenter?.navigateToStream?.listen((page) {
             if (page != null && page.isNotEmpty) {
@@ -53,7 +51,7 @@ class _SignUpPageState extends State<SignUpPage> {
             }
           });
           return GestureDetector(
-            onTap: _hideKeyboard,
+            onTap: () => hideKeyboard(context),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -105,7 +103,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             ),
                           ),
                           StreamBuilder<bool>(
-                              stream: widget.presenter?.formValidStream,
+                              stream: widget.presenter?.isFormValidStream,
                               builder: (context, snapshot) {
                                 return ElevatedButton(
                                   onPressed: snapshot.data == true
@@ -131,13 +129,5 @@ class _SignUpPageState extends State<SignUpPage> {
         },
       ),
     );
-  }
-
-  void _hideKeyboard() {
-    final currentFocus = FocusScope.of(context);
-
-    if (!currentFocus.hasPrimaryFocus) {
-      currentFocus.unfocus();
-    }
   }
 }
