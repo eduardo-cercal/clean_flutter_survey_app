@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
+import 'package:clean_flutter_login_app/ui/pages/survey_result/components/active_icon.dart';
+import 'package:clean_flutter_login_app/ui/pages/survey_result/components/disable_icon.dart';
+import 'package:clean_flutter_login_app/ui/pages/survey_result/components/survey_result.dart';
 import 'package:clean_flutter_login_app/ui/pages/survey_result/survey_answer_viewmodel.dart';
 import 'package:clean_flutter_login_app/ui/pages/survey_result/survey_result_page.dart';
 import 'package:clean_flutter_login_app/ui/pages/survey_result/survey_result_presenter.dart';
@@ -148,5 +151,10 @@ void main() {
     expect(find.text('Answer 1'), findsOneWidget);
     expect(find.text('60%'), findsOneWidget);
     expect(find.text('40%'), findsOneWidget);
+    expect(find.byType(ActiveIcon), findsOneWidget);
+    expect(find.byType(DisableIcon), findsOneWidget);
+    final image =
+        tester.widget<Image>(find.byType(Image)).image as NetworkImage;
+    expect(image.url, 'Image 0');
   });
 }
