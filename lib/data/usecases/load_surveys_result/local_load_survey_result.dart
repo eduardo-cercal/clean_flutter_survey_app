@@ -2,7 +2,6 @@ import 'package:clean_flutter_login_app/data/models/local_survey_result_model.da
 import 'package:clean_flutter_login_app/domain/entities/survey_result_entity.dart';
 import 'package:clean_flutter_login_app/domain/usecases/load_survey_result.dart';
 
-import '../../../domain/entities/survey_entity.dart';
 import '../../../domain/helpers/errors/domain_error.dart';
 import '../../cache/cache_storage.dart';
 
@@ -32,14 +31,11 @@ class LocalLoadSurveyResult implements LoadSurveyResult {
     }
   }
 
-  Future<void> save({
-    required String key,
-    required SurveyResultEntity value,
-  }) async {
+  Future<void> save(SurveyResultEntity surveyResult) async {
     try {
       await cacheStorage.save(
-          key: 'survey_result/$key',
-          value: LocalSurveyResultModel.fromEntity(value).toJson());
+          key: 'survey_result/${surveyResult.surveyId}',
+          value: LocalSurveyResultModel.fromEntity(surveyResult).toJson());
     } catch (error) {
       throw DomainError.unexpected;
     }

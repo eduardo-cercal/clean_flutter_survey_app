@@ -1,11 +1,8 @@
 import 'package:clean_flutter_login_app/data/cache/cache_storage.dart';
-import 'package:clean_flutter_login_app/data/usecases/load_surveys/local_load_surveys.dart';
 import 'package:clean_flutter_login_app/data/usecases/load_surveys_result/local_load_survey_result.dart';
 import 'package:clean_flutter_login_app/domain/entities/survey_answer_entity.dart';
-import 'package:clean_flutter_login_app/domain/entities/survey_entity.dart';
 import 'package:clean_flutter_login_app/domain/entities/survey_result_entity.dart';
 import 'package:clean_flutter_login_app/domain/helpers/errors/domain_error.dart';
-import 'package:clean_flutter_login_app/domain/usecases/load_survey_result.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -252,17 +249,16 @@ void main() {
         ],
       };
 
-      await systemUnderTest.save(key: surveyId, value: surveyResult);
+      await systemUnderTest.save(surveyResult);
 
-      verify(() =>
-              cacheStorage.save(key: 'survey_result/$surveyId', value: map))
-          .called(1);
+      verify(() => cacheStorage.save(
+          key: 'survey_result/${surveyResult.surveyId}', value: map)).called(1);
     });
 
     test('should throw UnexpectedError if save throws', () async {
       mockCacheStorageSaveError();
 
-      final future = systemUnderTest.save(key: surveyId, value: surveyResult);
+      final future = systemUnderTest.save(surveyResult);
 
       expect(future, throwsA(DomainError.unexpected));
     });
