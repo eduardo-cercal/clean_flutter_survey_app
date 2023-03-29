@@ -41,9 +41,6 @@ void main() {
   void mockDeleteSecureCacheStorage() =>
       mockDeleteSecureCacheStorageCall().thenAnswer((_) async => token);
 
-  void mockDeleteSecureCacheStorageError() =>
-      mockDeleteSecureCacheStorageCall().thenThrow(Exception());
-
   When mockDecorateeCall() => when(() => httpClient.request(
         url: any(named: 'url'),
         method: any(named: 'method'),

@@ -43,8 +43,7 @@ class _LoginPageState extends State<LoginPage>
           );
 
           handleNavigation(
-            context: context,
-            stream: widget.presenter?.navigateToStream,
+            widget.presenter?.navigateToStream,
             clear: true,
           );
 

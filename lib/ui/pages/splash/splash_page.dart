@@ -17,8 +17,7 @@ class SplashPage extends StatelessWidget with NavigationManager {
       ),
       body: Builder(builder: (context) {
         handleNavigation(
-          context: context,
-          stream: presenter.navigateToStream,
+          presenter.navigateToStream,
           clear: true,
         );
 

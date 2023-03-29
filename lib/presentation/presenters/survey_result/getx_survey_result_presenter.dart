@@ -8,7 +8,7 @@ import '../../../ui/helpers/errors/ui_error.dart';
 import '../../../ui/pages/survey_result/survey_result_presenter.dart';
 import '../../../ui/pages/survey_result/survey_result_viewmodel.dart';
 
-class GetxSurveyResultPresenter
+class GetxSurveyResultPresenter extends GetxController
     with LoadingManager, SessionManager
     implements SurveyResultPresenter {
   final LoadSurveyResult loadSurveyResult;

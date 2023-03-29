@@ -1,15 +1,16 @@
 import 'package:clean_flutter_login_app/ui/helpers/i18n/resources.dart';
 import 'package:clean_flutter_login_app/ui/mixins/loading_manager.dart';
+import 'package:clean_flutter_login_app/ui/mixins/navigation_manager.dart';
 import 'package:clean_flutter_login_app/ui/mixins/session_manager.dart';
 import 'package:clean_flutter_login_app/ui/pages/surveys/survey_viewmodel.dart';
 import 'package:clean_flutter_login_app/ui/pages/surveys/surveys_presenter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../components/reload_screen.dart';
 import 'components/survey_itens.dart';
 
-class SurveysPage extends StatelessWidget with LoadingManager, SessionManager {
+class SurveysPage extends StatelessWidget
+    with LoadingManager, SessionManager, NavigationManager {
   final SurveysPresenter? presenter;
 
   const SurveysPage({super.key, required this.presenter});
@@ -26,16 +27,10 @@ class SurveysPage extends StatelessWidget with LoadingManager, SessionManager {
             context: context,
             stream: presenter!.isLoadingStream,
           );
-          handleSession(
-            context: context,
-            stream: presenter!.isSessionExpiredStream,
-          );
+          handleSession(presenter!.isSessionExpiredStream);
 
-          presenter!.navigateToStream.listen((page) {
-            if (page != null && page.isNotEmpty) {
-              Get.toNamed(page);
-            }
-          });
+          handleNavigation(presenter!.navigateToStream);
+
           presenter!.loadData();
           return StreamBuilder<List<SurveyViewModel>?>(
               stream: presenter?.surveysStream,

@@ -9,7 +9,7 @@ import '../../../ui/helpers/errors/ui_error.dart';
 import '../../../ui/pages/surveys/survey_viewmodel.dart';
 import '../../../ui/pages/surveys/surveys_presenter.dart';
 
-class GetxSurveysPresenter
+class GetxSurveysPresenter extends GetxController
     with LoadingManager, SessionManager, NavigationManager
     implements SurveysPresenter {
   final LoadSurveys loadSurveys;

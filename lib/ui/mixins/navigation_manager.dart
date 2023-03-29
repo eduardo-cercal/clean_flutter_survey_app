@@ -1,11 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 mixin NavigationManager {
-  void handleNavigation({
-    required BuildContext context,
-    required Stream<String?>? stream,
+  void handleNavigation(
+    Stream<String?>? stream, {
     bool clear = false,
   }) {
     stream?.listen((page) {

@@ -43,8 +43,7 @@ class _SignUpPageState extends State<SignUpPage>
           );
 
           handleNavigation(
-            context: context,
-            stream: widget.presenter?.navigateToStream,
+            widget.presenter?.navigateToStream,
             clear: true,
           );
 

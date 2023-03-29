@@ -25,10 +25,7 @@ class SurveyResultPage extends StatelessWidget
           stream: presenter!.isLoadingStream,
         );
 
-        handleSession(
-          context: context,
-          stream: presenter!.isSessionExpiredStream,
-        );
+        handleSession(presenter!.isSessionExpiredStream);
 
         presenter?.loadData();
         return StreamBuilder(
