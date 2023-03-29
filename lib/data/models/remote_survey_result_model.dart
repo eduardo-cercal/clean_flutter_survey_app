@@ -1,4 +1,4 @@
-import 'package:clean_flutter_login_app/data/models/survey_answer_model.dart';
+import 'package:clean_flutter_login_app/data/models/remote_survey_answer_model.dart';
 import 'package:clean_flutter_login_app/domain/entities/survey_answer_entity.dart';
 import 'package:clean_flutter_login_app/domain/entities/survey_result_entity.dart';
 
@@ -19,7 +19,7 @@ class RemoteSurveyResultModel extends SurveyResultEntity {
       question: json['question'],
       answers: json['answers']
           .map<SurveyAnswerEntity>(
-              (element) => SurveyAnswerModel.fromJson(element).toEntity())
+              (element) => RemoteSurveyAnswerModel.fromJson(element).toEntity())
           .toList(),
     );
   }

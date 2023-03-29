@@ -1,6 +1,6 @@
 import 'package:clean_flutter_login_app/data/http/http.error.dart';
 import 'package:clean_flutter_login_app/data/http/http_client.dart';
-import 'package:clean_flutter_login_app/data/usecases/load_surveys_result/remote_load_surveys_result.dart';
+import 'package:clean_flutter_login_app/data/usecases/load_surveys_result/remote_load_survey_result.dart';
 import 'package:clean_flutter_login_app/domain/entities/survey_answer_entity.dart';
 import 'package:clean_flutter_login_app/domain/entities/survey_result_entity.dart';
 import 'package:clean_flutter_login_app/domain/helpers/errors/domain_error.dart';
