@@ -5,18 +5,26 @@ import 'package:clean_flutter_login_app/ui/mixins/session_manager.dart';
 import 'package:clean_flutter_login_app/ui/pages/surveys/survey_viewmodel.dart';
 import 'package:clean_flutter_login_app/ui/pages/surveys/surveys_presenter.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../components/reload_screen.dart';
 import 'components/survey_itens.dart';
 
-class SurveysPage extends StatelessWidget
-    with LoadingManager, SessionManager, NavigationManager {
+class SurveysPage extends StatefulWidget {
   final SurveysPresenter? presenter;
 
   const SurveysPage({super.key, required this.presenter});
 
   @override
+  State<SurveysPage> createState() => _SurveysPageState();
+}
+
+class _SurveysPageState extends State<SurveysPage>
+    with LoadingManager, SessionManager, NavigationManager, RouteAware {
+  @override
   Widget build(BuildContext context) {
+    Get.find<RouteObserver>()
+        .subscribe(this, ModalRoute.of(context) as PageRoute);
     return Scaffold(
       appBar: AppBar(
         title: Text(R.strings.surveys),
@@ -25,26 +33,26 @@ class SurveysPage extends StatelessWidget
         builder: (context) {
           handleLoading(
             context: context,
-            stream: presenter!.isLoadingStream,
+            stream: widget.presenter!.isLoadingStream,
           );
-          handleSession(presenter!.isSessionExpiredStream);
+          handleSession(widget.presenter!.isSessionExpiredStream);
 
-          handleNavigation(presenter!.navigateToStream);
+          handleNavigation(widget.presenter!.navigateToStream);
 
-          presenter!.loadData();
+          widget.presenter!.loadData();
           return StreamBuilder<List<SurveyViewModel>?>(
-              stream: presenter?.surveysStream,
+              stream: widget.presenter?.surveysStream,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return ReloadScreen(
                     error: snapshot.error.toString(),
-                    reload: presenter!.loadData,
+                    reload: widget.presenter!.loadData,
                   );
                 }
                 if (snapshot.hasData) {
                   return SurveyItens(
                     viewModel: snapshot.data!,
-                    presenter: presenter!,
+                    presenter: widget.presenter!,
                   );
                 }
                 return Container();
@@ -52,5 +60,17 @@ class SurveysPage extends StatelessWidget
         },
       ),
     );
+  }
+
+  @override
+  void didPopNext() {
+    widget.presenter?.loadData();
+    super.didPopNext();
+  }
+
+  @override
+  void dispose() {
+    Get.find<RouteObserver>().unsubscribe(this);
+    super.dispose();
   }
 }

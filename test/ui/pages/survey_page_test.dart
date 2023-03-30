@@ -57,8 +57,11 @@ void main() {
 
     mockPresenter();
 
+    final routeObserver = Get.put<RouteObserver>(RouteObserver<PageRoute>());
+
     final surveysPage = GetMaterialApp(
       initialRoute: '/surveys',
+      navigatorObservers: [routeObserver],
       getPages: [
         GetPage(
           name: '/surveys',
@@ -68,8 +71,11 @@ void main() {
         ),
         GetPage(
           name: '/any_route',
-          page: () => const Scaffold(
-            body: Text('fake page'),
+          page: () => Scaffold(
+            appBar: AppBar(
+              title: const Text('any_title'),
+            ),
+            body: const Text('fake page'),
           ),
         ),
         GetPage(
@@ -106,6 +112,15 @@ void main() {
     await loadPage(tester);
 
     verify(() => presenter.loadData()).called(1);
+  });
+
+  testWidgets('should call LoadSuveys on page reload', (tester) async {
+    await loadPage(tester);
+    navigateToController.add('/any_route');
+    await tester.pumpAndSettle();
+    await tester.pageBack();
+
+    verify(() => presenter.loadData()).called(2);
   });
 
   testWidgets(

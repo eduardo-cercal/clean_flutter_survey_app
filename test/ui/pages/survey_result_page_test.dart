@@ -44,6 +44,8 @@ void main() {
 
   void mockPresenter() {
     when(() => presenter.loadData()).thenAnswer((_) async {});
+    when(() => presenter.save(answer: any(named: 'answer')))
+        .thenAnswer((_) async {});
   }
 
   Future<void> loadPage(WidgetTester tester) async {
@@ -191,4 +193,27 @@ void main() {
       expect(Get.currentRoute, '/survey_result/any_survey_id');
     },
   );
+
+  testWidgets('should call save on list item click', (tester) async {
+    await loadPage(tester);
+
+    loadSurveyResultController.add(makeSurveyResult());
+    await mockNetworkImagesFor(() async => await tester.pump());
+
+    await tester.tap(find.text('Answer 1'));
+
+    verify(() => presenter.save(answer: 'Answer 1')).called(1);
+  });
+
+  testWidgets('should not call save on current answer item click',
+      (tester) async {
+    await loadPage(tester);
+
+    loadSurveyResultController.add(makeSurveyResult());
+    await mockNetworkImagesFor(() async => await tester.pump());
+
+    await tester.tap(find.text('Answer 0'));
+
+    verifyNever(() => presenter.save(answer: 'Answer 0'));
+  });
 }

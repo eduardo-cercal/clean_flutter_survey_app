@@ -40,6 +40,15 @@ class HttpAdapter implements HttpClient {
               .get(Uri.parse(url), headers: defaultHeaders)
               .timeout(const Duration(seconds: 10));
           break;
+        case 'put':
+          response = await client
+              .put(
+                Uri.parse(url),
+                headers: defaultHeaders,
+                body: body != null ? jsonEncode(body) : null,
+              )
+              .timeout(const Duration(seconds: 10));
+          break;
       }
     } catch (e) {
       throw HttpError.serverError;

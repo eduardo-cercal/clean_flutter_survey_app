@@ -12,18 +12,10 @@ void main() {
   late HttpAdapter systemUnderTest;
   final String url = faker.internet.httpUrl();
 
-  When mockHttpAdapterCall() => when(() => client.post(any(),
-      headers: any(named: 'headers'), body: any(named: 'body')));
-
-  void mockHttpAdapter() =>
-      mockHttpAdapterCall().thenAnswer((_) async => http.Response('{}', 200));
-
   setUp(() {
     client = MockHttpClient();
     systemUnderTest = HttpAdapter(client);
     registerFallbackValue(Uri.parse(url));
-
-    mockHttpAdapter();
   });
 
   group('shared', () {
@@ -40,6 +32,14 @@ void main() {
   });
 
   group('post', () {
+    When mockHttpAdapterCall() => when(() => client.post(any(),
+        headers: any(named: 'headers'), body: any(named: 'body')));
+
+    void mockHttpAdapter() =>
+        mockHttpAdapterCall().thenAnswer((_) async => http.Response('{}', 200));
+
+    setUp(() => mockHttpAdapter());
+
     test('should call post with correct values', () async {
       await systemUnderTest.request(
         url: url,
@@ -470,6 +470,237 @@ void main() {
       expect(future, throwsA(HttpError.serverError));
 
       verify(() => client.get(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+  });
+
+  group('put', () {
+    When mockHttpAdapterCall() => when(() => client.put(any(),
+        headers: any(named: 'headers'), body: any(named: 'body')));
+
+    void mockHttpAdapter() =>
+        mockHttpAdapterCall().thenAnswer((_) async => http.Response('{}', 200));
+
+    setUp(() => mockHttpAdapter());
+
+    test('should call put with correct values', () async {
+      await systemUnderTest.request(
+        url: url,
+        method: 'put',
+        body: {},
+      );
+      verify(
+        () => client.put(
+          Uri.parse(url),
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json',
+          },
+          body: '{}',
+        ),
+      );
+
+      await systemUnderTest.request(
+        url: url,
+        method: 'put',
+        body: {},
+        headers: {'any_header': 'any_value'},
+      );
+      verify(
+        () => client.put(
+          Uri.parse(url),
+          headers: {
+            'content-type': 'application/json',
+            'accept': 'application/json',
+            'any_header': 'any_value',
+          },
+          body: '{}',
+        ),
+      );
+    });
+
+    test('should call put without the body', () async {
+      when(() => client.put(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('{}', 200));
+
+      await systemUnderTest.request(url: url, method: 'put');
+
+      verify(() => client.put(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return data if put returns 200', () async {
+      when(() => client.put(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('{}', 200));
+
+      final result = await systemUnderTest.request(url: url, method: 'put');
+
+      expect(result, {});
+
+      verify(() => client.put(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return null if put returns 200 with null data', () async {
+      when(() => client.put(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('<!DOCTYPE html>', 200));
+
+      final result = await systemUnderTest.request(url: url, method: 'put');
+
+      expect(result, {});
+
+      verify(() => client.put(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return null if put returns 204', () async {
+      when(() => client.put(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('', 204));
+
+      final result = await systemUnderTest.request(url: url, method: 'put');
+
+      expect(result, {});
+
+      verify(() => client.put(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return null if put returns 204 with data', () async {
+      when(() => client.put(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('{}', 204));
+
+      final result = await systemUnderTest.request(url: url, method: 'put');
+
+      expect(result, {});
+
+      verify(() => client.put(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return bad request erro if put returns 400', () async {
+      when(() => client.put(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('{}', 400));
+
+      final future = systemUnderTest.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.badRequest));
+
+      verify(() => client.put(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return unauthorized error if put returns 401', () async {
+      when(() => client.put(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('{}', 401));
+
+      final future = systemUnderTest.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.unauthorized));
+
+      verify(() => client.put(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return forbiden error if put returns 403', () async {
+      when(() => client.put(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('{}', 403));
+
+      final future = systemUnderTest.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.forbiden));
+
+      verify(() => client.put(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return not found error if put returns 404', () async {
+      when(() => client.put(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('{}', 404));
+
+      final future = systemUnderTest.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.notFound));
+
+      verify(() => client.put(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return server error erro if put returns 500', () async {
+      when(() => client.put(any(), headers: any(named: 'headers')))
+          .thenAnswer((_) async => http.Response('{}', 500));
+
+      final future = systemUnderTest.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.serverError));
+
+      verify(() => client.put(
+            Uri.parse(url),
+            headers: {
+              'content-type': 'application/json',
+              'accept': 'application/json',
+            },
+          ));
+    });
+
+    test('should return server error if put throws', () async {
+      when(() => client.put(any(), headers: any(named: 'headers')))
+          .thenThrow(Exception());
+
+      final future = systemUnderTest.request(url: url, method: 'put');
+
+      expect(future, throwsA(HttpError.serverError));
+
+      verify(() => client.put(
             Uri.parse(url),
             headers: {
               'content-type': 'application/json',

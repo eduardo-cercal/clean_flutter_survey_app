@@ -19,11 +19,12 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-
+    final routeObserver = Get.put<RouteObserver>(RouteObserver<PageRoute>());
     return GetMaterialApp(
       title: 'Clean Flutter Course',
       debugShowCheckedModeBanner: false,
       theme: makeAppTheme(),
+      navigatorObservers: [routeObserver],
       initialRoute: '/',
       getPages: [
         GetPage(
