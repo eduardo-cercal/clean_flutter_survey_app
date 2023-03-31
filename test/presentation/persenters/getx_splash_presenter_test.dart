@@ -2,19 +2,22 @@ import 'package:clean_flutter_login_app/domain/entities/account_entity.dart';
 import 'package:clean_flutter_login_app/domain/usecases/load_current_account.dart';
 import 'package:clean_flutter_login_app/presentation/presenters/splash/getx_splash_presenter.dart';
 import 'package:clean_flutter_login_app/ui/pages/splash/splash_presenter.dart';
-import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../../mocks/fake_account_factory.dart';
 
 class MockLoadCurrentAccount extends Mock implements LoadCurrentAccount {}
 
 void main() {
   late LoadCurrentAccount loadCurrentAccount;
   late SplashPresenter systemUnderTest;
+  late AccountEntity? account;
 
   When mockLoadCurrentAccountCall() => when(() => loadCurrentAccount.load());
 
-  void mockLoadCurrentAccount(AccountEntity? account) {
+  void mockLoadCurrentAccount(AccountEntity? data) {
+    account = data;
     mockLoadCurrentAccountCall().thenAnswer((_) async => account);
   }
 
@@ -25,7 +28,7 @@ void main() {
   setUp(() {
     loadCurrentAccount = MockLoadCurrentAccount();
     systemUnderTest = GetxSplashPresenter(loadCurrentAccount);
-    mockLoadCurrentAccount(AccountEntity(faker.guid.guid()));
+    mockLoadCurrentAccount(FakeAccountFactory.makeEntity());
   });
 
   test('should call LoadCurrentAccout', () async {

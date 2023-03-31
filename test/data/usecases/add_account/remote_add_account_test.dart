@@ -8,6 +8,9 @@ import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../mocks/fake_account_factory.dart';
+import '../../../mocks/fake_params_factory.dart';
+
 class MockHttpClient extends Mock implements HttpClient {}
 
 void main() {
@@ -15,7 +18,21 @@ void main() {
   late String url;
   late RemoteAddAccount systemUnderTest;
   late AddAccountParamsEntity params;
-  final password = faker.internet.password();
+  late Map<String, dynamic> apiResult;
+
+  When mockHttpDataCall() => when(() => httpClient.request(
+        url: any(named: 'url'),
+        method: any(named: 'method'),
+        body: any(named: 'body'),
+      ));
+
+  void mockHttpData(Map<String, dynamic> data) {
+    apiResult = data;
+    mockHttpDataCall().thenAnswer((_) async => apiResult);
+  }
+
+  void mockHttpDataError(HttpError error) =>
+      mockHttpDataCall().thenThrow(error);
 
   setUp(() {
     httpClient = MockHttpClient();
@@ -24,24 +41,11 @@ void main() {
       httpClient: httpClient,
       url: url,
     );
-    params = AddAccountParamsEntity(
-      email: faker.internet.email(),
-      password: password,
-      name: faker.person.name(),
-      passwordConfirmation: password,
-    );
+    params = FakeParamsFactory.makeAddAccount();
+    mockHttpData(FakeAccountFactory.makeApiJson());
   });
 
   test('should call http client with the current values', () async {
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenAnswer((_) async => {
-          tokenKey: faker.guid.guid(),
-          nameKey: faker.person.name(),
-        });
-
     await systemUnderTest.add(params);
 
     verify(() => httpClient.request(
@@ -57,11 +61,7 @@ void main() {
   });
 
   test('should throw an unexpected error if http client return 400', () async {
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenThrow(HttpError.badRequest);
+    mockHttpDataError(HttpError.badRequest);
 
     final future = systemUnderTest.add(params);
 
@@ -69,11 +69,7 @@ void main() {
   });
 
   test('should throw an unexpected error if http client return 404', () async {
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenThrow(HttpError.notFound);
+    mockHttpDataError(HttpError.notFound);
 
     final future = systemUnderTest.add(params);
 
@@ -81,11 +77,7 @@ void main() {
   });
 
   test('should throw an unexpected error if http client return 500', () async {
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenThrow(HttpError.serverError);
+    mockHttpDataError(HttpError.serverError);
 
     final future = systemUnderTest.add(params);
 
@@ -93,11 +85,7 @@ void main() {
   });
 
   test('should throw a email in use error if http client return 403', () async {
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenThrow(HttpError.forbiden);
+    mockHttpDataError(HttpError.forbiden);
 
     final future = systemUnderTest.add(params);
 
@@ -105,30 +93,15 @@ void main() {
   });
 
   test('should return a account if return 200', () async {
-    final token = faker.guid.guid();
-
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenAnswer((_) async => {
-          tokenKey: token,
-          nameKey: faker.person.name(),
-        });
-
     final result = await systemUnderTest.add(params);
 
-    expect(result.token, token);
+    expect(result.token, apiResult['accessToken']);
   });
 
   test(
       'should return an account if http client return 200 with invalid response',
       () async {
-    when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenAnswer((_) async => {'invalid': 'invalid'});
+    mockHttpData({'invalid': 'invalid'});
 
     final future = systemUnderTest.add(params);
 

@@ -6,8 +6,9 @@ import 'package:clean_flutter_login_app/ui/pages/signup/signup_presenter.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../helpers/helpers.dart';
 
 class MockSignUpPresenter extends Mock implements SignUpPresenter {}
 
@@ -70,24 +71,14 @@ void main() {
 
     mockStreams();
 
-    final signUpPage = GetMaterialApp(
-      initialRoute: '/signup',
-      getPages: [
-        GetPage(
-          name: '/signup',
-          page: () => SignUpPage(
-            presenter: presenter,
-          ),
+    await tester.pumpWidget(
+      makePage(
+        path: '/signup',
+        page: () => SignUpPage(
+          presenter: presenter,
         ),
-        GetPage(
-          name: '/any_route',
-          page: () => const Scaffold(
-            body: Text('fake page'),
-          ),
-        ),
-      ],
+      ),
     );
-    await tester.pumpWidget(signUpPage);
   }
 
   tearDown(() {
@@ -367,7 +358,7 @@ void main() {
       navigateToController.add('any_route');
       await tester.pumpAndSettle();
 
-      expect(Get.currentRoute, 'any_route');
+      expect(currentRoute, 'any_route');
       expect(find.text('fake page'), findsOneWidget);
     },
   );

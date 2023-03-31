@@ -11,6 +11,8 @@ import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../mocks/fake_account_factory.dart';
+
 class MockValidation extends Mock implements Validation {}
 
 class MockAuthentication extends Mock implements AuthenticationUseCase {}
@@ -24,7 +26,7 @@ void main() {
   late SaveCurrentAccount saveCurrentAccount;
   final String email = faker.internet.email();
   final String password = faker.internet.password();
-  final token = faker.guid.guid();
+  late AccountEntity account;
 
   When mockValidationCall(String? field) => when(() => validation.validate(
         field: field ?? any(named: 'field'),
@@ -37,8 +39,9 @@ void main() {
 
   When mockAuthenticationCall() => when(() => authentication.auth(any()));
 
-  void mockAuthentication() {
-    mockAuthenticationCall().thenAnswer((_) async => AccountEntity(token));
+  void mockAuthentication(AccountEntity data) {
+    account = data;
+    mockAuthenticationCall().thenAnswer((_) async => data);
   }
 
   When mockSaveCurrentAccountCall() =>
@@ -72,9 +75,10 @@ void main() {
     );
     registerFallbackValue(
         AuthenticationParamsEntity(email: email, password: password));
-    registerFallbackValue(AccountEntity(token));
+    mockAuthentication(FakeAccountFactory.makeEntity());
+    registerFallbackValue(account);
     mockValidation();
-    mockAuthentication();
+
     mockSaveCurrentAccount();
   });
 
@@ -185,7 +189,7 @@ void main() {
 
     await systemUnderTest.auth();
 
-    verify(() => saveCurrentAccount.save(AccountEntity(token))).called(1);
+    verify(() => saveCurrentAccount.save(account)).called(1);
   });
 
   test('should emit unexpected error if SaveCurrentAccount fails', () async {

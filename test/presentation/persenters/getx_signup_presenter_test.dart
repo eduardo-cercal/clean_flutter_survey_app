@@ -12,6 +12,8 @@ import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../mocks/fake_account_factory.dart';
+
 class MockValidation extends Mock implements Validation {}
 
 class MockAddAccount extends Mock implements AddAccountUseCase {}
@@ -27,7 +29,7 @@ void main() {
   final String email = faker.internet.email();
   final String password = faker.internet.password();
   final String passwordConfirmation = faker.internet.password();
-  final token = faker.guid.guid();
+  late AccountEntity account;
 
   When mockValidationCall(String? field) => when(() => validation.validate(
         field: field ?? any(named: 'field'),
@@ -38,14 +40,15 @@ void main() {
     mockValidationCall(field).thenReturn(value);
   }
 
-  When mockAddAccountCall(String? field) => when(() => addAccount.add(any()));
+  When mockAddAccountCall() => when(() => addAccount.add(any()));
 
-  void mockAddAccount({String? field, ValidationError? value}) {
-    mockAddAccountCall(field).thenAnswer((_) async => AccountEntity(token));
+  void mockAddAccount(AccountEntity data) {
+    account = data;
+    mockAddAccountCall().thenAnswer((_) async => data);
   }
 
   void mockAddAccountError(DomainError error) {
-    mockAddAccountCall(null).thenThrow(error);
+    mockAddAccountCall().thenThrow(error);
   }
 
   When mockSaveCurrentAccountCall() =>
@@ -86,9 +89,10 @@ void main() {
       password: password,
       passwordConfirmation: password,
     ));
-    registerFallbackValue(AccountEntity(token));
+    mockAddAccount(FakeAccountFactory.makeEntity());
+    registerFallbackValue(account);
     mockValidation();
-    mockAddAccount();
+
     mockSaveCurrentAccount();
   });
 
@@ -312,7 +316,7 @@ void main() {
 
     await systemUnderTest.signUp();
 
-    verify(() => saveCurrentAccount.save(AccountEntity(token))).called(1);
+    verify(() => saveCurrentAccount.save(account)).called(1);
   });
 
   test('should emit unexpected error if SaveCurrentAccount fails', () async {

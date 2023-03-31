@@ -9,6 +9,8 @@ import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../mocks/fake_survey_result_factory.dart';
+
 class MockHttpClient extends Mock implements HttpClient {}
 
 void main() {
@@ -18,27 +20,6 @@ void main() {
   final answer = faker.lorem.sentence();
   final url = faker.internet.httpUrl();
 
-  Map<String, dynamic> mockValidData() => {
-        'surveyId': faker.guid.guid(),
-        'question': faker.randomGenerator.string(50),
-        'answers': [
-          {
-            'image': faker.internet.httpUrl(),
-            'answer': faker.randomGenerator.string(20),
-            'percent': faker.randomGenerator.integer(100),
-            'count': faker.randomGenerator.integer(1000),
-            'isCurrentAccountAnswer': faker.randomGenerator.boolean(),
-          },
-          {
-            'answer': faker.randomGenerator.string(20),
-            'percent': faker.randomGenerator.integer(100),
-            'count': faker.randomGenerator.integer(1000),
-            'isCurrentAccountAnswer': faker.randomGenerator.boolean(),
-          },
-        ],
-        'date': faker.date.dateTime().toIso8601String(),
-      };
-
   When mockHttpClientCall() => when(() => httpClient.request(
         url: any(named: 'url'),
         method: any(named: 'method'),
@@ -46,7 +27,7 @@ void main() {
       ));
 
   void mockHttpClient() {
-    surveyResult = mockValidData();
+    surveyResult = FakeSurveyResultFactory.makeApiJson();
     mockHttpClientCall().thenAnswer((_) async => surveyResult);
   }
 
@@ -124,10 +105,11 @@ void main() {
       'should return an account if http client return 200 with invalid response',
       () async {
     when(() => httpClient.request(
-          url: any(named: 'url'),
-          method: any(named: 'method'),
-          body: any(named: 'body'),
-        )).thenAnswer((_) async => {'invalid': 'invalid'});
+              url: any(named: 'url'),
+              method: any(named: 'method'),
+              body: any(named: 'body'),
+            ))
+        .thenAnswer((_) async => FakeSurveyResultFactory.makeInvalidApiJson());
 
     final future = systemUnderTest.save(answer: answer);
 

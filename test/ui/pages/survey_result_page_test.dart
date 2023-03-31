@@ -3,15 +3,16 @@ import 'dart:async';
 import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
 import 'package:clean_flutter_login_app/ui/pages/survey_result/components/active_icon.dart';
 import 'package:clean_flutter_login_app/ui/pages/survey_result/components/disable_icon.dart';
-import 'package:clean_flutter_login_app/ui/pages/survey_result/survey_answer_viewmodel.dart';
 import 'package:clean_flutter_login_app/ui/pages/survey_result/survey_result_page.dart';
 import 'package:clean_flutter_login_app/ui/pages/survey_result/survey_result_presenter.dart';
 import 'package:clean_flutter_login_app/ui/pages/survey_result/survey_result_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:network_image_mock/network_image_mock.dart';
+
+import '../../mocks/fake_survey_result_factory.dart';
+import '../helpers/helpers.dart';
 
 class MockSurveyResultPresenter extends Mock implements SurveyResultPresenter {}
 
@@ -57,48 +58,21 @@ void main() {
 
     mockPresenter();
 
-    final surveysPage = GetMaterialApp(
-      initialRoute: '/survey_result/any_survey_id',
-      getPages: [
-        GetPage(
-          name: '/survey_result/:survey_id',
+    await mockNetworkImagesFor(
+      () async => await tester.pumpWidget(
+        makePage(
+          path: '/survey_result/any_survey_id',
           page: () => SurveyResultPage(
             presenter: presenter,
           ),
         ),
-        GetPage(
-          name: '/login',
-          page: () => const Scaffold(
-            body: Text('fake login'),
-          ),
-        ),
-      ],
+      ),
     );
-    await mockNetworkImagesFor(
-        () async => await tester.pumpWidget(surveysPage));
   }
 
   tearDown(() {
     closeStreams();
   });
-
-  SurveyResultViewModel makeSurveyResult() => const SurveyResultViewModel(
-        surveyId: 'Any id',
-        question: 'Question',
-        answers: [
-          SurveyAnswerViewModel(
-            image: 'Image 0',
-            answer: 'Answer 0',
-            isCurrentAnswer: true,
-            percent: '60%',
-          ),
-          SurveyAnswerViewModel(
-            answer: 'Answer 1',
-            isCurrentAnswer: false,
-            percent: '40%',
-          ),
-        ],
-      );
 
   testWidgets('should call LoadSuveyResult on page load', (tester) async {
     await loadPage(tester);
@@ -148,7 +122,7 @@ void main() {
       (tester) async {
     await loadPage(tester);
 
-    loadSurveyResultController.add(makeSurveyResult());
+    loadSurveyResultController.add(FakeSurveyResultFactory.makeViewModel());
     await mockNetworkImagesFor(() async => await tester.pump());
 
     expect(find.text('Algo inesperado aconteceu. Tente novamente em breve'),
@@ -174,7 +148,7 @@ void main() {
       isSessionExpiredController.add(true);
       await tester.pumpAndSettle();
 
-      expect(Get.currentRoute, '/login');
+      expect(currentRoute, '/login');
       expect(find.text('fake login'), findsOneWidget);
     },
   );
@@ -186,18 +160,18 @@ void main() {
 
       isSessionExpiredController.add(false);
       await tester.pumpAndSettle();
-      expect(Get.currentRoute, '/survey_result/any_survey_id');
+      expect(currentRoute, '/survey_result/any_survey_id');
 
       isSessionExpiredController.add(null);
       await tester.pumpAndSettle();
-      expect(Get.currentRoute, '/survey_result/any_survey_id');
+      expect(currentRoute, '/survey_result/any_survey_id');
     },
   );
 
   testWidgets('should call save on list item click', (tester) async {
     await loadPage(tester);
 
-    loadSurveyResultController.add(makeSurveyResult());
+    loadSurveyResultController.add(FakeSurveyResultFactory.makeViewModel());
     await mockNetworkImagesFor(() async => await tester.pump());
 
     await tester.tap(find.text('Answer 1'));
@@ -209,7 +183,7 @@ void main() {
       (tester) async {
     await loadPage(tester);
 
-    loadSurveyResultController.add(makeSurveyResult());
+    loadSurveyResultController.add(FakeSurveyResultFactory.makeViewModel());
     await mockNetworkImagesFor(() async => await tester.pump());
 
     await tester.tap(find.text('Answer 0'));

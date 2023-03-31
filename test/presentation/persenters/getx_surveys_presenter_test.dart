@@ -5,10 +5,11 @@ import 'package:clean_flutter_login_app/presentation/presenters/surveys/getx_sur
 import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
 import 'package:clean_flutter_login_app/ui/pages/surveys/survey_viewmodel.dart';
 import 'package:clean_flutter_login_app/ui/pages/surveys/surveys_presenter.dart';
-import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../../mocks/fake_surveys_factory.dart';
 
 class MockLoadSurveys extends Mock implements LoadSurveys {}
 
@@ -16,21 +17,6 @@ void main() {
   late LoadSurveys loadSurveys;
   late SurveysPresenter systemUnderTest;
   late List<SurveyEntity> surveys;
-
-  List<SurveyEntity> validData() => [
-        SurveyEntity(
-          id: faker.guid.guid(),
-          question: faker.lorem.sentence(),
-          dateTime: DateTime(2020, 2, 20),
-          didAnswer: faker.randomGenerator.boolean(),
-        ),
-        SurveyEntity(
-          id: faker.guid.guid(),
-          question: faker.lorem.sentence(),
-          dateTime: DateTime(2018, 10, 3),
-          didAnswer: faker.randomGenerator.boolean(),
-        ),
-      ];
 
   When mockLoadSurveysCall() => when(() => loadSurveys.load());
 
@@ -46,7 +32,7 @@ void main() {
   setUp(() {
     loadSurveys = MockLoadSurveys();
     systemUnderTest = GetxSurveysPresenter(loadSurveys);
-    mockLoadSurveys(validData());
+    mockLoadSurveys(FakeSurveysFactory.makeEntities());
   });
 
   test('should call LoadSurveys on loadData', () async {

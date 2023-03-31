@@ -4,11 +4,12 @@ import 'package:clean_flutter_login_app/ui/helpers/errors/ui_error.dart';
 import 'package:clean_flutter_login_app/ui/pages/surveys/survey_viewmodel.dart';
 import 'package:clean_flutter_login_app/ui/pages/surveys/surveys_page.dart';
 import 'package:clean_flutter_login_app/ui/pages/surveys/surveys_presenter.dart';
-import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../../mocks/fake_surveys_factory.dart';
+import '../helpers/helpers.dart';
 
 class MockSurveysPresenter extends Mock implements SurveysPresenter {}
 
@@ -57,56 +58,19 @@ void main() {
 
     mockPresenter();
 
-    final routeObserver = Get.put<RouteObserver>(RouteObserver<PageRoute>());
-
-    final surveysPage = GetMaterialApp(
-      initialRoute: '/surveys',
-      navigatorObservers: [routeObserver],
-      getPages: [
-        GetPage(
-          name: '/surveys',
-          page: () => SurveysPage(
-            presenter: presenter,
-          ),
+    await tester.pumpWidget(
+      makePage(
+        path: '/surveys',
+        page: () => SurveysPage(
+          presenter: presenter,
         ),
-        GetPage(
-          name: '/any_route',
-          page: () => Scaffold(
-            appBar: AppBar(
-              title: const Text('any_title'),
-            ),
-            body: const Text('fake page'),
-          ),
-        ),
-        GetPage(
-          name: '/login',
-          page: () => const Scaffold(
-            body: Text('fake login'),
-          ),
-        ),
-      ],
+      ),
     );
-    await tester.pumpWidget(surveysPage);
   }
 
   tearDown(() {
     closeStreams();
   });
-
-  List<SurveyViewModel> makeSurveys() => [
-        SurveyViewModel(
-          id: '1',
-          question: 'Question 1',
-          date: 'Date 1',
-          didAnswer: faker.randomGenerator.boolean(),
-        ),
-        SurveyViewModel(
-          id: faker.guid.guid(),
-          question: 'Question 2',
-          date: 'Date 2',
-          didAnswer: faker.randomGenerator.boolean(),
-        ),
-      ];
 
   testWidgets('should call LoadSuveys on page load', (tester) async {
     await loadPage(tester);
@@ -152,7 +116,7 @@ void main() {
   testWidgets('should present list if surveysStream succeeds', (tester) async {
     await loadPage(tester);
 
-    loadSurveysController.add(makeSurveys());
+    loadSurveysController.add(FakeSurveysFactory.makeViewModel());
     await tester.pump();
     expect(find.text('Algo inesperado aconteceu. Tente novamente em breve'),
         findsNothing);
@@ -177,7 +141,7 @@ void main() {
     "Should call goToSurveyResult on survey click",
     (WidgetTester tester) async {
       await loadPage(tester);
-      loadSurveysController.add(makeSurveys());
+      loadSurveysController.add(FakeSurveysFactory.makeViewModel());
       await tester.pump();
 
       await tester.tap(find.text('Question 1'));
@@ -195,7 +159,7 @@ void main() {
       navigateToController.add('any_route');
       await tester.pumpAndSettle();
 
-      expect(Get.currentRoute, 'any_route');
+      expect(currentRoute, 'any_route');
       expect(find.text('fake page'), findsOneWidget);
     },
   );
@@ -208,7 +172,7 @@ void main() {
       isSessionExpiredController.add(true);
       await tester.pumpAndSettle();
 
-      expect(Get.currentRoute, '/login');
+      expect(currentRoute, '/login');
       expect(find.text('fake login'), findsOneWidget);
     },
   );
@@ -220,11 +184,11 @@ void main() {
 
       isSessionExpiredController.add(false);
       await tester.pumpAndSettle();
-      expect(Get.currentRoute, '/surveys');
+      expect(currentRoute, '/surveys');
 
       isSessionExpiredController.add(null);
       await tester.pumpAndSettle();
-      expect(Get.currentRoute, '/surveys');
+      expect(currentRoute, '/surveys');
     },
   );
 }

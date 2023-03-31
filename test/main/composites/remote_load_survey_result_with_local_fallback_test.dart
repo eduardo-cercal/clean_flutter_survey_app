@@ -1,6 +1,5 @@
 import 'package:clean_flutter_login_app/data/usecases/load_surveys_result/local_load_survey_result.dart';
 import 'package:clean_flutter_login_app/data/usecases/load_surveys_result/remote_load_survey_result.dart';
-import 'package:clean_flutter_login_app/domain/entities/survey_answer_entity.dart';
 import 'package:clean_flutter_login_app/domain/entities/survey_result_entity.dart';
 import 'package:clean_flutter_login_app/domain/helpers/errors/domain_error.dart';
 import 'package:clean_flutter_login_app/domain/usecases/load_survey_result.dart';
@@ -8,6 +7,8 @@ import 'package:clean_flutter_login_app/main/composites/remote_load_survey_resul
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../../mocks/fake_survey_result_factory.dart';
 
 class MockRemoteLoadSurveyResult extends Mock
     implements RemoteLoadSurveyResult {}
@@ -58,19 +59,6 @@ void main() {
       mockLocalLoadSurveyResultLoadBySurveyCall()
           .thenThrow(DomainError.unexpected);
 
-  SurveyResultEntity mockValidData() => SurveyResultEntity(
-        surveyId: faker.guid.guid(),
-        question: faker.lorem.sentence(),
-        answers: [
-          SurveyAnswerEntity(
-            image: faker.internet.httpUrl(),
-            answer: faker.lorem.sentence(),
-            isCurrentAnswer: true,
-            percent: 40,
-          ),
-        ],
-      );
-
   setUp(() {
     remote = MockRemoteLoadSurveyResult();
     local = MockLocalLoadSurveyResult();
@@ -78,13 +66,13 @@ void main() {
       remote: remote,
       local: local,
     );
-    surveyResult = mockValidData();
+    surveyResult = FakeSurveyResultFactory.makeEntity();
     surveyId = faker.guid.guid();
     registerFallbackValue(surveyResult);
-    mockRemoteLoadSurveyResult(mockValidData());
+    mockRemoteLoadSurveyResult(FakeSurveyResultFactory.makeEntity());
     mockLocalLoadSurveyResultSave();
     mockLocalLoadSurveyResultValidate();
-    mockLocalLoadSurveyResultLoadBySurvey(mockValidData());
+    mockLocalLoadSurveyResultLoadBySurvey(FakeSurveyResultFactory.makeEntity());
   });
 
   test('should call remote load by survey', () async {

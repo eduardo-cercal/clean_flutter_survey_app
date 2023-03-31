@@ -4,8 +4,9 @@ import 'package:clean_flutter_login_app/ui/pages/splash/splash_page.dart';
 import 'package:clean_flutter_login_app/ui/pages/splash/splash_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../helpers/helpers.dart';
 
 class MockSplashPresenter extends Mock implements SplashPresenter {}
 
@@ -30,21 +31,14 @@ void main() {
   Future<void> loadPage(WidgetTester tester) async {
     mockLoadCurrentAccount();
     mockStreams();
-    await tester.pumpWidget(GetMaterialApp(
-      initialRoute: '/',
-      getPages: [
-        GetPage(
-          name: '/',
-          page: () => SplashPage(presenter: presenter),
+    await tester.pumpWidget(
+      makePage(
+        path: '/',
+        page: () => SplashPage(
+          presenter: presenter,
         ),
-        GetPage(
-          name: '/any_route',
-          page: () => const Scaffold(
-            body: Text('fake page'),
-          ),
-        ),
-      ],
-    ));
+      ),
+    );
   }
 
   tearDown(() {
@@ -69,7 +63,7 @@ void main() {
     navigateToController.add('/any_route');
     await tester.pumpAndSettle();
 
-    expect(Get.currentRoute, '/any_route');
+    expect(currentRoute, '/any_route');
     expect(find.text('fake page'), findsOneWidget);
   });
 
@@ -78,10 +72,10 @@ void main() {
 
     navigateToController.add('');
     await tester.pump();
-    expect(Get.currentRoute, '/');
+    expect(currentRoute, '/');
 
     navigateToController.add(null);
     await tester.pump();
-    expect(Get.currentRoute, '/');
+    expect(currentRoute, '/');
   });
 }

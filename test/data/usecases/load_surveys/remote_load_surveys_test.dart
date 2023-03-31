@@ -8,6 +8,8 @@ import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../mocks/fake_surveys_factory.dart';
+
 class MockHttpClient extends Mock implements HttpClient {}
 
 void main() {
@@ -16,26 +18,11 @@ void main() {
   late List<Map<String, dynamic>>? list;
   final url = faker.internet.httpUrl();
 
-  List<Map<String, dynamic>> mockValidData() => [
-        {
-          'id': faker.guid.guid(),
-          'question': faker.randomGenerator.string(50),
-          'didAnswer': faker.randomGenerator.boolean(),
-          'date': faker.date.dateTime().toIso8601String(),
-        },
-        {
-          'id': faker.guid.guid(),
-          'question': faker.randomGenerator.string(50),
-          'didAnswer': faker.randomGenerator.boolean(),
-          'date': faker.date.dateTime().toIso8601String(),
-        }
-      ];
-
   When mockHttpClientCall() => when(() =>
       httpClient.request(url: any(named: 'url'), method: any(named: 'method')));
 
   void mockHttpClient() {
-    list = mockValidData();
+    list = FakeSurveysFactory.makeApiJson();
     mockHttpClientCall().thenAnswer((_) async => list);
   }
 
@@ -105,9 +92,7 @@ void main() {
           url: any(named: 'url'),
           method: any(named: 'method'),
           body: any(named: 'body'),
-        )).thenAnswer((_) async => [
-          {'invalid': 'invalid'}
-        ]);
+        )).thenAnswer((_) async => FakeSurveysFactory.makeInvalidApiJson());
 
     final future = systemUnderTest.load();
 

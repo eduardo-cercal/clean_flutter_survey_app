@@ -7,6 +7,8 @@ import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../mocks/fake_survey_result_factory.dart';
+
 class MockCacheStorage extends Mock implements CacheStorage {}
 
 void main() {
@@ -14,24 +16,6 @@ void main() {
   late LocalLoadSurveyResult systemUnderTest;
   late Map<String, dynamic>? validData;
   late String surveyId;
-
-  Map<String, dynamic> mockValidData() => {
-        "surveyId": faker.guid.guid(),
-        "question": faker.lorem.sentence(),
-        "answers": [
-          {
-            'image': faker.internet.httpUrl(),
-            'answer': faker.lorem.sentence(),
-            'isCurrentAnswer': 'true',
-            'percent': '40',
-          },
-          {
-            'answer': faker.lorem.sentence(),
-            'isCurrentAnswer': 'false',
-            'percent': '60',
-          }
-        ]
-      };
 
   When mockCacheStorageCall() => when(() => cacheStorage.fetch(any()));
 
@@ -45,7 +29,7 @@ void main() {
   setUp(() {
     cacheStorage = MockCacheStorage();
     systemUnderTest = LocalLoadSurveyResult(cacheStorage);
-    mockCacheStorage(mockValidData());
+    mockCacheStorage(FakeSurveyResultFactory.makeCacheJson());
     surveyId = faker.guid.guid();
   });
 
@@ -98,18 +82,7 @@ void main() {
     });
 
     test('should throw  UnexpectedError if cache is invalid', () async {
-      mockCacheStorage({
-        "surveyId": faker.guid.guid(),
-        "question": faker.lorem.sentence(),
-        "answers": [
-          {
-            'image': faker.internet.httpUrl(),
-            'answer': faker.lorem.sentence(),
-            'isCurrentAnswer': 'invalid bool',
-            'percent': 'invalid int',
-          },
-        ]
-      });
+      mockCacheStorage(FakeSurveyResultFactory.makeInvalidCacheJson());
 
       final future = systemUnderTest.loadBySurvey(surveyId: surveyId);
 
@@ -117,9 +90,7 @@ void main() {
     });
 
     test('should throw  UnexpectedError if cache is incomplete', () async {
-      mockCacheStorage({
-        "surveyId": faker.guid.guid(),
-      });
+      mockCacheStorage(FakeSurveyResultFactory.makeIncompletedCacheJson());
 
       final future = systemUnderTest.loadBySurvey(surveyId: surveyId);
 
@@ -153,18 +124,7 @@ void main() {
     });
 
     test('should delete cache if it is invalid', () async {
-      mockCacheStorage({
-        "surveyId": faker.guid.guid(),
-        "question": faker.lorem.sentence(),
-        "answers": [
-          {
-            'image': faker.internet.httpUrl(),
-            'answer': faker.lorem.sentence(),
-            'isCurrentAnswer': 'invalid bool',
-            'percent': 'invalid int',
-          },
-        ]
-      });
+      mockCacheStorage(FakeSurveyResultFactory.makeInvalidCacheJson());
 
       await systemUnderTest.validate(surveyId);
 
@@ -172,9 +132,7 @@ void main() {
     });
 
     test('should delete cache if it is incomplete', () async {
-      mockCacheStorage({
-        "surveyId": faker.guid.guid(),
-      });
+      mockCacheStorage(FakeSurveyResultFactory.makeIncompletedCacheJson());
 
       await systemUnderTest.validate(surveyId);
 
@@ -193,24 +151,6 @@ void main() {
   group('save', () {
     late SurveyResultEntity surveyResult;
 
-    SurveyResultEntity mockSurveyResult() => SurveyResultEntity(
-          surveyId: faker.guid.guid(),
-          question: faker.lorem.sentence(),
-          answers: [
-            SurveyAnswerEntity(
-              image: faker.internet.httpUrl(),
-              answer: faker.lorem.sentence(),
-              isCurrentAnswer: true,
-              percent: 40,
-            ),
-            SurveyAnswerEntity(
-              answer: faker.lorem.sentence(),
-              isCurrentAnswer: false,
-              percent: 60,
-            ),
-          ],
-        );
-
     When mockCacheStorageSaveCall() => when(() =>
         cacheStorage.save(key: any(named: 'key'), value: any(named: 'value')));
 
@@ -223,7 +163,7 @@ void main() {
     }
 
     setUp(() {
-      surveyResult = mockSurveyResult();
+      surveyResult = FakeSurveyResultFactory.makeEntity();
       mockCacheStorageSave();
     });
 
